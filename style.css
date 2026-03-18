@@ -292,3 +292,37 @@ textarea.form-control { min-height: 150px; resize: vertical; }
   border-top: 1px solid var(--glass-border);
   margin-top: 4rem;
 }
+
+/* Admin Specific UI */
+.admin-tabs {
+  display: flex; gap: 1rem; margin-bottom: 2rem;
+  border-bottom: 1px solid var(--glass-border); padding-bottom: 1rem;
+  overflow-x: auto; scrollbar-width: none;
+}
+.admin-tabs::-webkit-scrollbar { display: none; }
+.admin-tab-btn {
+  background: transparent; color: var(--text-secondary); border: none;
+  font-size: var(--step-0); font-weight: 500; cursor: pointer;
+  padding: 0.5rem 1rem; transition: all 0.3s ease; border-radius: 8px;
+}
+.admin-tab-btn:hover { color: #fff; background: rgba(255,255,255,0.05); }
+.admin-tab-btn.active { color: var(--accent-1); background: rgba(59, 130, 246, 0.1); }
+
+.admin-tab-content { display: none; animation: fadeIn 0.4s ease; }
+.admin-tab-content.active { display: block; }
+
+.admin-list-item {
+  background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border);
+  border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem;
+  display: flex; justify-content: space-between; align-items: start; gap: 1.5rem;
+}
+.admin-list-item-content { flex-grow: 1; }
+
+.btn-danger {
+  background: rgba(239, 68, 68, 0.1); color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+.btn-danger:hover {
+  background: rgba(239, 68, 68, 0.2); border-color: #ef4444; color: #fff; transform: translateY(-2px);
+}
+.btn-sm { padding: 0.5rem 1rem; font-size: 0.85rem; }

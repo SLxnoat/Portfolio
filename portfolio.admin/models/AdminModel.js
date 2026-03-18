@@ -5,7 +5,7 @@ export default class AdminModel {
         return Store.getState().portfolioData;
     }
 
-    saveProfile(profileData) {
-        Store.updateData('profile', profileData);
+    saveSection(sectionKey, data) {
+        Store.updateData(sectionKey, data);
     }
 }
