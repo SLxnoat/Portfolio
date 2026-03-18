@@ -1,17 +1,11 @@
-import db from '../../db.js';
+import { Store } from '../../core/Store.js';
 
 export default class AdminModel {
-    constructor() {
-        this.data = null;
-    }
-
     fetchData() {
-        this.data = db.getData();
-        return this.data;
+        return Store.getState().portfolioData;
     }
 
     saveProfile(profileData) {
-        db.updateSection('profile', profileData);
-        this.data.profile = profileData;
+        Store.updateData('profile', profileData);
     }
 }
