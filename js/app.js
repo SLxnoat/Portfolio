@@ -20,9 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
     };
 
-    // Re-check for elements after content is injected (since it's a SPA)
-    const originalRender = AppPresenter.prototype.init; // This is a bit rough, but let's see
-    // Better: let the presenter call this or use a MutationObserver
+    // MutationObserver re-observes .reveal elements injected by the SPA renderer
     const mutationObserver = new MutationObserver(observeElements);
     mutationObserver.observe(document.body, { childList: true, subtree: true });
     

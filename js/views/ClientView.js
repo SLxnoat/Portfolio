@@ -369,9 +369,9 @@ export default class ClientView {
         <footer class="py-5 mt-5 position-relative" style="border-top: 1px solid rgba(255, 255, 255, 0.05); background: rgba(5,5,8,0.8);">
             <div class="container text-center position-relative z-1">
                 <div class="mb-4 d-flex justify-content-center gap-4 text-center mx-auto">
-                    <a href="#" class="text-secondary hover-white fs-4" style="transition: all 0.3s;" onmouseover="this.style.color='var(--accent-primary)'; this.style.transform='translateY(-3px)';" onmouseout="this.style.color=''; this.style.transform='translateY(0)';"><i class="fab fa-github"></i></a>
-                    <a href="#" class="text-secondary hover-white fs-4" style="transition: all 0.3s;" onmouseover="this.style.color='var(--accent-primary)'; this.style.transform='translateY(-3px)';" onmouseout="this.style.color=''; this.style.transform='translateY(0)';"><i class="fab fa-linkedin"></i></a>
-                    <a href="#" class="text-secondary hover-white fs-4" style="transition: all 0.3s;" onmouseover="this.style.color='var(--accent-primary)'; this.style.transform='translateY(-3px)';" onmouseout="this.style.color=''; this.style.transform='translateY(0)';"><i class="fas fa-envelope"></i></a>
+                    <a href="https://${profile.github}" target="_blank" aria-label="GitHub" class="text-secondary hover-white fs-4" style="transition: all 0.3s;" onmouseover="this.style.color='var(--accent-primary)'; this.style.transform='translateY(-3px)';" onmouseout="this.style.color=''; this.style.transform='translateY(0)';"><i class="fab fa-github"></i></a>
+                    <a href="https://${profile.linkedin}" target="_blank" aria-label="LinkedIn" class="text-secondary hover-white fs-4" style="transition: all 0.3s;" onmouseover="this.style.color='var(--accent-primary)'; this.style.transform='translateY(-3px)';" onmouseout="this.style.color=''; this.style.transform='translateY(0)';"><i class="fab fa-linkedin"></i></a>
+                    <a href="mailto:${profile.email}" aria-label="Email" class="text-secondary hover-white fs-4" style="transition: all 0.3s;" onmouseover="this.style.color='var(--accent-primary)'; this.style.transform='translateY(-3px)';" onmouseout="this.style.color=''; this.style.transform='translateY(0)';"><i class="fas fa-envelope"></i></a>
                 </div>
                 <p class="text-secondary font-monospace small mb-1">© ${new Date().getFullYear()} ${profile.name}. All rights reserved.</p>
                 <div class="d-flex justify-content-center align-items-center gap-3 mt-2">
@@ -425,8 +425,8 @@ export default class ClientView {
                 "jobTitle": profile.role,
                 "url": profile.url,
                 "sameAs": [
-                    `https://linkedin.com/in/${profile.linkedin}`,
-                    `https://github.com/${profile.github}`
+                    `https://${profile.linkedin}`,
+                    `https://${profile.github}`
                 ],
                 "description": profile.tagline
             };
@@ -436,6 +436,18 @@ export default class ClientView {
 
     render(data) {
         const { profile, projects, skills, experience, education, layout } = data;
+        // Bug #1: null-guard — if profile is missing every template literal throws
+        if (!profile) {
+            this.appContainer.innerHTML = `
+                <div class="vw-100 vh-100 d-flex justify-content-center align-items-center bg-dark text-white">
+                    <div class="text-center">
+                        <i class="fas fa-exclamation-triangle fa-3x text-danger mb-4"></i>
+                        <h2 class="text-danger fw-bold">Profile Not Found</h2>
+                        <p class="text-secondary">The local database returned no profile. Try clearing site data and reloading.</p>
+                    </div>
+                </div>`;
+            return;
+        }
         this.currentProfile = profile;
         let html = '';
         const sections = layout && layout.sections ? layout.sections : ['about', 'skills', 'projects', 'experience', 'contact'];
@@ -593,10 +605,7 @@ export default class ClientView {
                 log(`BUFFER RESET.`, 'text-secondary-terminal');
             } else if (cmd === 'sudo') {
                 log(`SYSTEM OVERRIDE DETECTED... AUTHORIZATION REQUIRED.`, 'text-error text-prime fw-bold');
-                // Trigger hidden admin modal from attachAdminTriggers context
-                const initiate = this.attachAdminTriggers(); // This is a bit tricky since it's a closure
-                // Instead, we dispatch the sudo keyboard event or call the login method if accessible
-                this.initiateAdminLogin(); 
+                this.initiateAdminLogin();
             } else {
                 log(`COMMAND NOT RECOGNIZED: '${cmd}'. TYPE 'HELP' FOR OPTIONS.`, 'text-error');
             }
@@ -697,7 +706,6 @@ export default class ClientView {
             }
         });
 
-        window.adminTriggersAttached = true;
         // Hidden Sysadmin Gateway - Method 2: Typing 'sudo' anywhere
         let typed = '';
         window.addEventListener('keydown', (e) => {
