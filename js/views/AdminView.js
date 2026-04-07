@@ -352,7 +352,7 @@ export default class AdminView {
                                     <div class="col-12"><hr class="border-secondary opacity-25 my-1"></div>
                                     <div class="col-md-6 mt-4 admin-input-group">
                                         <label class="form-label text-secondary small text-uppercase fw-bold"><i class="fas fa-key me-2 text-danger"></i>Admin Override Passphrase</label>
-                                        <input type="password" class="form-control bg-dark text-danger font-monospace rounded-3 py-3 px-4 fw-bold" name="adminPassword" placeholder="Enter passphrase" required style="border: 1px solid rgba(255,50,50,0.2); box-shadow: inset 0 4px 10px rgba(0,0,0,0.5); letter-spacing: 2px;">
+                                        <input type="password" class="form-control bg-dark text-danger font-monospace rounded-3 py-3 px-4 fw-bold" name="adminPassword" placeholder="Enter new passphrase (leave blank to keep current)" style="border: 1px solid rgba(255,50,50,0.2); box-shadow: inset 0 4px 10px rgba(0,0,0,0.5); letter-spacing: 2px;">
                                         <div class="form-text text-secondary mt-2 small"><i class="fas fa-exclamation-triangle me-1 text-warning"></i>This passcode is required to bypass the hidden public gateway.</div>
                                     </div>
                                 </div>
@@ -780,6 +780,10 @@ export default class AdminView {
             e.preventDefault();
             const formData = new FormData(profileForm);
             const profileData = Object.fromEntries(formData.entries());
+            
+            // Only update password if not empty
+            if (!profileData.adminPassword) delete profileData.adminPassword;
+            
             profileData.openToWork = formData.has('openToWork');
             // Merge with existing profile to preserve fields not in this form (ambient/SEO/etc.)
             const fullProfile = { ...data.profile, ...profileData };
@@ -792,6 +796,10 @@ export default class AdminView {
             o2wToggle.addEventListener('change', () => {
                 const formData = new FormData(profileForm);
                 const profileData = Object.fromEntries(formData.entries());
+                
+                // Only update password if not empty
+                if (!profileData.adminPassword) delete profileData.adminPassword;
+                
                 profileData.openToWork = o2wToggle.checked;
                 const fullProfile = { ...data.profile, ...profileData };
                 if(this.onSaveProfile) this.onSaveProfile(fullProfile);
