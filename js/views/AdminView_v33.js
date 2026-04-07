@@ -2,7 +2,6 @@ export default class AdminView {
     constructor() {
         console.error("V3.3_BOOT_SEQUENCE_COMPLETE");
         this.adminContainer = document.getElementById('admin-root');
-        this.onSaveProfile = null;
         this.onSaveItem = null;
         this.onDeleteItem = null;
         this.onReorderItems = null; // (collection, idOrderArray)
@@ -770,7 +769,6 @@ export default class AdminView {
         if(ambientForm) {
             ambientForm.addEventListener('submit', (e) => {
                 e.preventDefault();
-                alert("SUBMIT_ACKNOWLEDGED: ambient");
                 const formData = new FormData(ambientForm);
                 const ambientData = Object.fromEntries(formData.entries());
                 // Merge with profile data (since it's all in the profile store)
@@ -783,7 +781,6 @@ export default class AdminView {
         const profileForm = document.getElementById('form-profile');
         profileForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            alert("SUBMIT_ACKNOWLEDGED: profile");
             const formData = new FormData(profileForm);
             const profileData = Object.fromEntries(formData.entries());
             
@@ -916,7 +913,6 @@ export default class AdminView {
             if (form) {
                 form.addEventListener('submit', (e) => {
                     e.preventDefault();
-                    alert(`SUBMIT_ACKNOWLEDGED: ${col}`);
                     const formData = new FormData(form);
                     const itemData = Object.fromEntries(formData.entries());
                     console.log(`DEBUG: Saving dynamic record to [${col}]`, itemData);

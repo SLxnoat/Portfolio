@@ -1,5 +1,5 @@
 import PortfolioModel from '../models/PortfolioModel.js';
-import AdminView from '../views/AdminView.js';
+import AdminView from '../views/AdminView_v33.js';
 
 export default class AdminPresenter {
     constructor() {
@@ -7,26 +7,42 @@ export default class AdminPresenter {
         this.adminView = new AdminView();
 
         this.adminView.onSaveProfile = async (data) => {
-            await this.model.updateProfile(data);
-            this.refreshApp();
+            try {
+                await this.model.updateProfile(data);
+                this.refreshApp();
+            } catch (error) {
+                console.error("CRITICAL_SYSTEM_ERROR: Profile Sync Failed.", error);
+                alert(`SYSTEM ERROR: [${error.name}] Failed to save identity core. Details: ${error.message}`);
+            }
         };
 
         this.adminView.onSaveItem = async (collection, data) => {
-            if (data.id) {
-                // Keep existing order if merely editing content
-                let item = await this.model.db.get(collection, data.id);
-                if(data.order === null || isNaN(data.order)) data.order = item.order;
-                await this.model.updateItem(collection, data);
-            } else {
-                // Adds natively calculate proper max order value
-                await this.model.addItem(collection, data);
+            try {
+                if (data.id) {
+                    // Keep existing order if merely editing content
+                    let item = await this.model.db.get(collection, data.id);
+                    if(data.order === null || isNaN(data.order)) data.order = item ? item.order : null;
+                    await this.model.updateItem(collection, data);
+                } else {
+                    // Logic fix: Remove empty id to allow IndexedDB autoIncrement to work
+                    delete data.id;
+                    // Adds natively calculate proper max order value
+                    await this.model.addItem(collection, data);
+                }
+                this.refreshApp();
+            } catch (error) {
+                console.error(`CRITICAL_SYSTEM_ERROR: ${collection.toUpperCase()}_PERSISTENCE_FAILURE`, error);
+                alert(`SYSTEM ERROR: [${error.name}] Failed to commit changes to ${collection}. Details: ${error.message}`);
             }
-            this.refreshApp();
         };
 
         this.adminView.onMarkMessageRead = async (id) => {
-            await this.model.markMessageRead(id);
-            this.refreshApp();
+            try {
+                await this.model.markMessageRead(id);
+                this.refreshApp();
+            } catch (error) {
+                alert(`SYSTEM ERROR: Failed to update transmission status: ${error.message}`);
+            }
         };
 
         this.adminView.onReorderSections = async (sectionsArray) => {
@@ -35,8 +51,12 @@ export default class AdminPresenter {
         };
 
         this.adminView.onDeleteItem = async (collection, id) => {
-            await this.model.deleteItem(collection, id);
-            this.refreshApp();
+            try {
+                await this.model.deleteItem(collection, id);
+                this.refreshApp();
+            } catch (error) {
+                alert(`SYSTEM ERROR: Failed to delete ${collection} record: ${error.message}`);
+            }
         };
 
         this.adminView.onReorderItems = async (collection, orderMapping) => {
