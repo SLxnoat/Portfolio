@@ -54,15 +54,16 @@ export default class Database {
         });
     }
 
-    async getStore(storeName, mode = 'readonly') {
+    getStore(storeName, mode = 'readonly') {
+        if (!this.db) throw new Error("DATABASE_NOT_INITIALIZED: Initialize with init() before access.");
         const transaction = this.db.transaction([storeName], mode);
         return transaction.objectStore(storeName);
     }
 
     async getAll(storeName) {
-        return new Promise(async (resolve, reject) => {
+        return new Promise((resolve, reject) => {
             try {
-                const store = await this.getStore(storeName);
+                const store = this.getStore(storeName);
                 const request = store.getAll();
                 request.onsuccess = () => resolve(request.result);
                 request.onerror = () => reject(request.error);
@@ -71,9 +72,9 @@ export default class Database {
     }
 
     async get(storeName, id) {
-        return new Promise(async (resolve, reject) => {
+        return new Promise((resolve, reject) => {
             try {
-                const store = await this.getStore(storeName);
+                const store = this.getStore(storeName);
                 const request = store.get(id);
                 request.onsuccess = () => resolve(request.result);
                 request.onerror = () => reject(request.error);
@@ -82,9 +83,9 @@ export default class Database {
     }
 
     async put(storeName, item) {
-        return new Promise(async (resolve, reject) => {
+        return new Promise((resolve, reject) => {
             try {
-                const store = await this.getStore(storeName, 'readwrite');
+                const store = this.getStore(storeName, 'readwrite');
                 const request = store.put(item);
                 request.onsuccess = () => {
                     this.syncChannel.postMessage('DATABASE_UPDATED');
@@ -96,9 +97,9 @@ export default class Database {
     }
 
     async delete(storeName, id) {
-        return new Promise(async (resolve, reject) => {
+        return new Promise((resolve, reject) => {
             try {
-                const store = await this.getStore(storeName, 'readwrite');
+                const store = this.getStore(storeName, 'readwrite');
                 const request = store.delete(id);
                 request.onsuccess = () => {
                     this.syncChannel.postMessage('DATABASE_UPDATED');
@@ -109,10 +110,24 @@ export default class Database {
         });
     }
 
-    async count(storeName) {
-        return new Promise(async (resolve, reject) => {
+    async clear(storeName) {
+        return new Promise((resolve, reject) => {
             try {
-                const store = await this.getStore(storeName);
+                const store = this.getStore(storeName, 'readwrite');
+                const request = store.clear();
+                request.onsuccess = () => {
+                    this.syncChannel.postMessage('DATABASE_UPDATED');
+                    resolve();
+                };
+                request.onerror = () => reject(request.error);
+            } catch(e) { reject(e); }
+        });
+    }
+
+    async count(storeName) {
+        return new Promise((resolve, reject) => {
+            try {
+                const store = this.getStore(storeName);
                 const request = store.count();
                 request.onsuccess = () => resolve(request.result);
                 request.onerror = () => reject(request.error);

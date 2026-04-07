@@ -2,7 +2,7 @@ import Database from './Database.js';
 
 export default class PortfolioModel {
     constructor() {
-        this.db = new Database('PortfolioDB', 4);
+        this.db = new Database('OS_PRIME_DataStore', 5);
         this.stores = [
             { name: 'profile', keyPath: 'id', autoIncrement: false },
             { name: 'projects', keyPath: 'id', autoIncrement: true },
@@ -269,10 +269,7 @@ export default class PortfolioModel {
             
             // Clear all existing stores
             for(const store of this.stores) {
-                const items = await this.db.getAll(store.name);
-                for(const item of items) {
-                    await this.db.delete(store.name, item[store.keyPath] || item.id);
-                }
+                await this.db.clear(store.name);
                 
                 // Put new items
                 if(data[store.name]) {

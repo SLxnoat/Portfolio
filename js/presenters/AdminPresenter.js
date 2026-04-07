@@ -92,7 +92,7 @@ export default class AdminPresenter {
                     <div class="text-center">
                         <i class="fas fa-lock fa-3x text-danger mb-4"></i>
                         <h2 class="text-danger fw-bold">Database Locked</h2>
-                        <p class="text-secondary">Failed to initialize IndexedDB Admin Pipeline.</p>
+                        <p class="text-secondary">Failed to initialize IndexedDB Admin Pipeline: <code class="text-light">${error.name || error.message || 'Unknown Error'}</code></p>
                     </div>
                 </div>`;
         }

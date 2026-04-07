@@ -33,7 +33,8 @@ export default class AppPresenter {
                     <div class="text-center">
                         <i class="fas fa-exclamation-triangle fa-3x text-danger mb-4"></i>
                         <h2 class="text-danger fw-bold">System Error</h2>
-                        <p class="text-secondary">Failed to initialize local IndexedDB. Please check your browser's permissions.</p>
+                        <p class="text-secondary">Failed to initialize local IndexedDB: <code class="text-light">${error.name || error.message || 'Unknown Error'}</code></p>
+                        <p class="text-secondary small mt-3">Try clearing site data or ensuring you are not in strict private browsing mode.</p>
                     </div>
                 </div>`;
         }
