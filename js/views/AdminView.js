@@ -91,6 +91,7 @@ export default class AdminView {
                     <button class="nav-link admin-nav-btn ${this.activeTabId === 'v-pills-projects' ? 'active' : ''}" id="v-pills-projects-tab" data-bs-toggle="pill" data-bs-target="#v-pills-projects" type="button" role="tab"><i class="fas fa-layer-group me-3 text-center" style="width:20px;"></i>Innovations</button>
                     <button class="nav-link admin-nav-btn ${this.activeTabId === 'v-pills-skills' ? 'active' : ''}" id="v-pills-skills-tab" data-bs-toggle="pill" data-bs-target="#v-pills-skills" type="button" role="tab"><i class="fas fa-atom me-3 text-center" style="width:20px;"></i>Tech Arsenal</button>
                     <button class="nav-link admin-nav-btn ${this.activeTabId === 'v-pills-experience' ? 'active' : ''}" id="v-pills-experience-tab" data-bs-toggle="pill" data-bs-target="#v-pills-experience" type="button" role="tab"><i class="fas fa-terminal me-3 text-center" style="width:20px;"></i>Timeline</button>
+                    <button class="nav-link admin-nav-btn ${this.activeTabId === 'v-pills-education' ? 'active' : ''}" id="v-pills-education-tab" data-bs-toggle="pill" data-bs-target="#v-pills-education" type="button" role="tab"><i class="fas fa-user-graduate me-3 text-center" style="width:20px;"></i>Academic Log</button>
                     
                     <p class="text-secondary font-monospace text-uppercase small px-3 mt-4 mb-2 fw-bold" style="font-size: 0.65rem; letter-spacing: 2px; opacity: 0.4;">Comms</p>
                     ${(() => {
