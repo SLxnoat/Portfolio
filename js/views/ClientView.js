@@ -32,7 +32,8 @@ export default class ClientView {
         </nav>`;
     }
 
-    renderHero(profile) {
+    renderHero(data) {
+        const profile = this.currentProfile;
         return `
         <section class="hero-section position-relative d-flex align-items-center" style="min-height: 100vh; overflow: hidden; padding-top: 80px;">
             <div class="position-absolute fw-bolder text-uppercase" style="font-size: 20vw; color: rgba(255,255,255,0.015); top: 10%; left: -5%; z-index: 0; user-select: none; pointer-events: none; white-space: nowrap;">${profile.ui_hero_bg || 'HELLO'}</div>
@@ -116,7 +117,8 @@ export default class ClientView {
         </section>`;
     }
 
-    renderAbout(profile) {
+    renderAbout() {
+        const profile = this.currentProfile;
         return `
         <section id="about" class="py-5 position-relative mt-5 reveal">
             <div class="position-absolute fw-bolder text-uppercase" style="font-size: 16vw; color: rgba(255,255,255,0.02); top: -80px; left: -20px; z-index: 0; user-select: none; pointer-events: none; overflow: hidden; white-space: nowrap;">${profile.ui_about_bg || 'ABOUT'}</div>
@@ -157,6 +159,7 @@ export default class ClientView {
     }
 
     renderSkills(skills) {
+        const profile = this.currentProfile;
         return `
         <section id="skills" class="py-5 position-relative mt-5 reveal">
             <div class="position-absolute fw-bolder text-uppercase w-100 text-end pe-4" style="font-size: 16vw; color: rgba(255,255,255,0.02); top: -60px; right: 0; z-index: 0; user-select: none; pointer-events: none; overflow: hidden; white-space: nowrap;">${profile.ui_skills_bg || 'SKILLS'}</div>
@@ -188,6 +191,7 @@ export default class ClientView {
     }
 
     renderProjects(projects) {
+        const profile = this.currentProfile;
         return `
         <section id="projects" class="py-5 position-relative mt-5 reveal">
             <div class="position-absolute fw-bolder text-uppercase w-100" style="font-size: 16vw; color: rgba(255,255,255,0.02); top: -60px; left: -20px; z-index: 0; user-select: none; pointer-events: none; overflow: hidden; white-space: nowrap;">${profile.ui_projects_bg || 'PROJECTS'}</div>
@@ -228,6 +232,7 @@ export default class ClientView {
     }
 
     renderExperience(exp, edu) {
+        const profile = this.currentProfile;
         return `
         <section id="experience" class="py-5 position-relative mt-5 mb-5 reveal">
             <div class="position-absolute fw-bolder text-uppercase w-100 text-end pe-4" style="font-size: 16vw; color: rgba(255,255,255,0.02); top: -40px; right: 0; z-index: 0; user-select: none; pointer-events: none; overflow: hidden; white-space: nowrap;">${profile.ui_timeline_bg || 'TIMELINE'}</div>
@@ -276,7 +281,8 @@ export default class ClientView {
         </section>`;
     }
 
-    renderContact(profile) {
+    renderContact() {
+        const profile = this.currentProfile;
         return `
         <section id="contact" class="py-5 position-relative mt-5 reveal">
             <div class="position-absolute fw-bolder text-uppercase" style="font-size: 16vw; color: rgba(255,255,255,0.02); top: -40px; left: -20px; z-index: 0; user-select: none; pointer-events: none; overflow: hidden; white-space: nowrap;">${profile.ui_contact_bg || 'CONTACT'}</div>
@@ -358,6 +364,7 @@ export default class ClientView {
     }
 
     renderFooter() {
+        const profile = this.currentProfile;
         return `
         <footer class="py-5 mt-5 position-relative" style="border-top: 1px solid rgba(255, 255, 255, 0.05); background: rgba(5,5,8,0.8);">
             <div class="container text-center position-relative z-1">
@@ -428,19 +435,20 @@ export default class ClientView {
 
     render(data) {
         const { profile, projects, skills, experience, education, layout } = data;
+        this.currentProfile = profile;
         let html = '';
         const sections = layout && layout.sections ? layout.sections : ['about', 'skills', 'projects', 'experience', 'contact'];
 
         html += this.renderHeader(profile, sections);
         html += `<main style="padding-top: 60px;">`;
-        html += this.renderHero(profile);
+        html += this.renderHero();
 
         sections.forEach(sec => {
-            if (sec === 'about') html += this.renderAbout(profile);
+            if (sec === 'about') html += this.renderAbout();
             if (sec === 'skills') html += this.renderSkills(skills);
             if (sec === 'projects') html += this.renderProjects(projects);
             if (sec === 'experience') html += this.renderExperience(experience, education);
-            if (sec === 'contact') html += this.renderContact(profile);
+            if (sec === 'contact') html += this.renderContact();
         });
 
         html += `</main>`;
