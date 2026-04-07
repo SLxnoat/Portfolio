@@ -37,7 +37,36 @@ export default class PortfolioModel {
                 linkedin: 'linkedin.com/in/charuka-mayura',
                 openToWork: true,
                 adminPassword: 'admin',
-                summary: 'IT undergraduate specializing in AI/ML with hands-on experience in machine learning, deep learning, NLP, and LLM systems.\n\nBuilt and deployed 17+ projects\nAchieved:\n- 96% accuracy (credit scoring model)\n- 95% accuracy (CNN image classifier)\n- 90%+ accuracy (BERT NLP classifier)\nExperienced in end-to-end ML pipelines + MLOps\nDeveloped LLM-powered assistants using LLaMA + LangChain'
+                summary: 'IT undergraduate specializing in AI/ML with hands-on experience in machine learning, deep learning, NLP, and LLM systems.\n\nBuilt and deployed 17+ projects\nAchieved:\n- 96% accuracy (credit scoring model)\n- 95% accuracy (CNN image classifier)\n- 90%+ accuracy (BERT NLP classifier)\nExperienced in end-to-end ML pipelines + MLOps\nDeveloped LLM-powered assistants using LLaMA + LangChain',
+                
+                // SEO & System
+                keywords: 'AI Engineer, ML Engineer, Deep Learning, NLP, Portfolio, Charuka Mayura, Sri Lanka, Tech Arsenal, Innovation',
+                url: 'https://slxnoat.github.io/portfolio/',
+                version: 'OS.PRIME_V3.2RC',
+
+                // UI Strings
+                ui_hero_bg: 'HELLO',
+                ui_hero_status: 'System Online // User Identified',
+                ui_hero_btn: 'Explore Arsenal',
+                ui_about_bg: 'ABOUT',
+                ui_skills_bg: 'SKILLS',
+                ui_projects_bg: 'PROJECTS',
+                ui_timeline_bg: 'TIMELINE',
+                ui_contact_bg: 'CONTACT',
+                ui_nav_about: 'About',
+                ui_nav_skills: 'Skills',
+                ui_nav_projects: 'Projects',
+                ui_nav_experience: 'Experience',
+                ui_nav_contact: 'Contact',
+                
+                // Assistant & Terminal
+                ui_terminal_prompt: 'sys_admin@portfolio:~',
+                ui_assistant_name: 'PRIME_AGENT',
+                ui_assistant_ver: 'v1.0',
+                ui_assistant_welcome: 'WELCOME, VISITOR.',
+                ui_assistant_boot: 'PRIME_AGENT BOOT SEQUENCE INITIATED...',
+                ui_assistant_ready: 'SYSTEM_READY. WELCOME, OPERATOR.',
+                ui_hero_deploy: 'Deploying Modules'
             });
 
             const initialProjects = [
@@ -77,6 +106,40 @@ export default class PortfolioModel {
                 let changed = false;
                 if (profile.openToWork === undefined) { profile.openToWork = true; changed = true; }
                 if (profile.adminPassword === undefined) { profile.adminPassword = 'admin'; changed = true; }
+                
+                const defaults = {
+                    keywords: 'AI Engineer, ML Engineer, Deep Learning, NLP, Portfolio, Charuka Mayura, Sri Lanka, Tech Arsenal, Innovation',
+                    url: 'https://slxnoat.github.io/portfolio/',
+                    version: 'OS.PRIME_V3.2RC',
+                    ui_hero_bg: 'HELLO',
+                    ui_hero_status: 'System Online // User Identified',
+                    ui_hero_btn: 'Explore Arsenal',
+                    ui_about_bg: 'ABOUT',
+                    ui_skills_bg: 'SKILLS',
+                    ui_projects_bg: 'PROJECTS',
+                    ui_timeline_bg: 'TIMELINE',
+                    ui_contact_bg: 'CONTACT',
+                    ui_nav_about: 'About',
+                    ui_nav_skills: 'Skills',
+                    ui_nav_projects: 'Projects',
+                    ui_nav_experience: 'Experience',
+                    ui_nav_contact: 'Contact',
+                    ui_terminal_prompt: 'sys_admin@portfolio:~',
+                    ui_assistant_name: 'PRIME_AGENT',
+                    ui_assistant_ver: 'v1.0',
+                    ui_assistant_welcome: 'WELCOME, VISITOR.',
+                    ui_assistant_boot: 'PRIME_AGENT BOOT SEQUENCE INITIATED...',
+                    ui_assistant_ready: 'SYSTEM_READY. WELCOME, OPERATOR.',
+                    ui_hero_deploy: 'Deploying Modules'
+                };
+
+                for (const key in defaults) {
+                    if (profile[key] === undefined) {
+                        profile[key] = defaults[key];
+                        changed = true;
+                    }
+                }
+
                 if (changed) await this.db.put('profile', profile);
             }
             

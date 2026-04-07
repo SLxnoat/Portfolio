@@ -104,6 +104,7 @@ export default class AdminView {
 
                     <p class="text-secondary font-monospace text-uppercase small px-3 mt-4 mb-2 fw-bold" style="font-size: 0.65rem; letter-spacing: 2px; opacity: 0.4;">Config</p>
                     <button class="nav-link admin-nav-btn ${this.activeTabId === 'v-pills-layout' ? 'active' : ''}" id="v-pills-layout-tab" data-bs-toggle="pill" data-bs-target="#v-pills-layout" type="button" role="tab"><i class="fas fa-sliders-h me-3 text-center" style="width:20px;"></i>Runtime Engine</button>
+                    <button class="nav-link admin-nav-btn ${this.activeTabId === 'v-pills-ambient' ? 'active' : ''}" id="v-pills-ambient-tab" data-bs-toggle="pill" data-bs-target="#v-pills-ambient" type="button" role="tab"><i class="fas fa-magic me-3 text-center" style="width:20px;"></i>Ambient UI & SEO</button>
                 </div>
                 
                 <div class="mt-auto pt-5">
@@ -388,6 +389,114 @@ export default class AdminView {
                             </div>
                         </div>
                     </div>
+
+                    <!-- Ambient UI & SEO Tab -->
+                    <div class="tab-pane fade ${this.activeTabId === 'v-pills-ambient' ? 'show active' : ''}" id="v-pills-ambient" role="tabpanel">
+                        <div class="d-flex align-items-center mb-5 gap-4 border-bottom border-dark pb-3">
+                            <i class="fas fa-magic fa-2x text-secondary opacity-50"></i>
+                            <div>
+                                <h1 class="fw-bolder m-0 text-white font-monospace display-6">&lt;Ambient_Parameters /&gt;</h1>
+                                <p class="text-secondary m-0">Synchronize the subconscious UI elements and SEO protocols.</p>
+                            </div>
+                        </div>
+                        <div class="admin-card p-4 p-xl-5">
+                            <form id="form-ambient">
+                                <h5 class="text-info font-monospace mb-4 border-bottom border-secondary pb-2" style="border-color: rgba(255,255,255,0.05) !important;"># S_E_O Protocols</h5>
+                                <div class="row g-4 mb-5">
+                                    <div class="col-md-8 mb-3 admin-input-group">
+                                        <label class="form-label text-secondary small text-uppercase fw-bold"><i class="fas fa-search me-2 text-info"></i>Global Keywords</label>
+                                        <input type="text" class="form-control bg-dark text-white rounded-3 py-3 px-4" name="keywords" value="${profile.keywords || ''}" required style="border: 1px solid rgba(255,255,255,0.05);">
+                                    </div>
+                                    <div class="col-md-4 mb-3 admin-input-group">
+                                        <label class="form-label text-secondary small text-uppercase fw-bold"><i class="fas fa-link me-2 text-info"></i>Canonical URL</label>
+                                        <input type="url" class="form-control bg-dark text-white rounded-3 py-3 px-4" name="url" value="${profile.url || ''}" required style="border: 1px solid rgba(255,255,255,0.05);">
+                                    </div>
+                                </div>
+
+                                <h5 class="text-info font-monospace mb-4 border-bottom border-secondary pb-2" style="border-color: rgba(255,255,255,0.05) !important;"># U_I Background Vectors</h5>
+                                <div class="row g-4 mb-5">
+                                    <div class="col-md-4 mb-3 admin-input-group">
+                                        <label class="form-label text-secondary small text-uppercase fw-bold">Hero Ambient</label>
+                                        <input type="text" class="form-control bg-dark text-white rounded-3 py-3 px-4" name="ui_hero_bg" value="${profile.ui_hero_bg || ''}" required style="border: 1px solid rgba(255,255,255,0.05);">
+                                    </div>
+                                    <div class="col-md-4 mb-3 admin-input-group">
+                                        <label class="form-label text-secondary small text-uppercase fw-bold">About Ambient</label>
+                                        <input type="text" class="form-control bg-dark text-white rounded-3 py-3 px-4" name="ui_about_bg" value="${profile.ui_about_bg || ''}" required style="border: 1px solid rgba(255,255,255,0.05);">
+                                    </div>
+                                    <div class="col-md-4 mb-3 admin-input-group">
+                                        <label class="form-label text-secondary small text-uppercase fw-bold">Skills Ambient</label>
+                                        <input type="text" class="form-control bg-dark text-white rounded-3 py-3 px-4" name="ui_skills_bg" value="${profile.ui_skills_bg || ''}" required style="border: 1px solid rgba(255,255,255,0.05);">
+                                    </div>
+                                    <div class="col-md-4 mb-3 admin-input-group">
+                                        <label class="form-label text-secondary small text-uppercase fw-bold">Projects Ambient</label>
+                                        <input type="text" class="form-control bg-dark text-white rounded-3 py-3 px-4" name="ui_projects_bg" value="${profile.ui_projects_bg || ''}" required style="border: 1px solid rgba(255,255,255,0.05);">
+                                    </div>
+                                    <div class="col-md-4 mb-3 admin-input-group">
+                                        <label class="form-label text-secondary small text-uppercase fw-bold">Timeline Ambient</label>
+                                        <input type="text" class="form-control bg-dark text-white rounded-3 py-3 px-4" name="ui_timeline_bg" value="${profile.ui_timeline_bg || ''}" required style="border: 1px solid rgba(255,255,255,0.05);">
+                                    </div>
+                                    <div class="col-md-4 mb-3 admin-input-group">
+                                        <label class="form-label text-secondary small text-uppercase fw-bold">Hero Deployment</label>
+                                        <input type="text" class="form-control bg-dark text-white rounded-3 py-3 px-4" name="ui_hero_deploy" value="${profile.ui_hero_deploy || ''}" required style="border: 1px solid rgba(255,255,255,0.05);">
+                                    </div>
+                                    <div class="col-md-4 mb-3 admin-input-group">
+                                        <label class="form-label text-secondary small text-uppercase fw-bold">Contact Ambient</label>
+                                        <input type="text" class="form-control bg-dark text-white rounded-3 py-3 px-4" name="ui_contact_bg" value="${profile.ui_contact_bg || ''}" required style="border: 1px solid rgba(255,255,255,0.05);">
+                                    </div>
+                                </div>
+
+                                <h5 class="text-info font-monospace mb-4 border-bottom border-secondary pb-2" style="border-color: rgba(255,255,255,0.05) !important;"># Terminal & Assistant</h5>
+                                <div class="row g-4 mb-5">
+                                    <div class="col-md-6 mb-3 admin-input-group">
+                                        <label class="form-label text-secondary small text-uppercase fw-bold">Terminal Prompt</label>
+                                        <input type="text" class="form-control bg-dark text-white rounded-3 py-3 px-4" name="ui_terminal_prompt" value="${profile.ui_terminal_prompt || ''}" required style="border: 1px solid rgba(255,255,255,0.05);">
+                                    </div>
+                                    <div class="col-md-6 mb-3 admin-input-group">
+                                        <label class="form-label text-secondary small text-uppercase fw-bold">Assistant Ready Msg</label>
+                                        <input type="text" class="form-control bg-dark text-white rounded-3 py-3 px-4" name="ui_assistant_ready" value="${profile.ui_assistant_ready || ''}" required style="border: 1px solid rgba(255,255,255,0.05);">
+                                    </div>
+                                    <div class="col-md-3 mb-3 admin-input-group">
+                                        <label class="form-label text-secondary small text-uppercase fw-bold">Assistant Name</label>
+                                        <input type="text" class="form-control bg-dark text-white rounded-3 py-3 px-4" name="ui_assistant_name" value="${profile.ui_assistant_name || ''}" required style="border: 1px solid rgba(255,255,255,0.05);">
+                                    </div>
+                                    <div class="col-md-3 mb-3 admin-input-group">
+                                        <label class="form-label text-secondary small text-uppercase fw-bold">System Version</label>
+                                        <input type="text" class="form-control bg-dark text-white rounded-3 py-3 px-4" name="version" value="${profile.version || ''}" required style="border: 1px solid rgba(255,255,255,0.05);">
+                                    </div>
+                                </div>
+
+                                <h5 class="text-info font-monospace mb-4 border-bottom border-secondary pb-2" style="border-color: rgba(255,255,255,0.05) !important;"># Nav Labels</h5>
+                                <div class="row g-4 mb-5">
+                                    <div class="col mb-3 admin-input-group">
+                                        <label class="form-label text-secondary small text-uppercase fw-bold">About</label>
+                                        <input type="text" class="form-control bg-dark text-white rounded-3 py-2 px-3" name="ui_nav_about" value="${profile.ui_nav_about || ''}" required style="border: 1px solid rgba(255,255,255,0.05);">
+                                    </div>
+                                    <div class="col mb-3 admin-input-group">
+                                        <label class="form-label text-secondary small text-uppercase fw-bold">Skills</label>
+                                        <input type="text" class="form-control bg-dark text-white rounded-3 py-2 px-3" name="ui_nav_skills" value="${profile.ui_nav_skills || ''}" required style="border: 1px solid rgba(255,255,255,0.05);">
+                                    </div>
+                                    <div class="col mb-3 admin-input-group">
+                                        <label class="form-label text-secondary small text-uppercase fw-bold">Projects</label>
+                                        <input type="text" class="form-control bg-dark text-white rounded-3 py-2 px-3" name="ui_nav_projects" value="${profile.ui_nav_projects || ''}" required style="border: 1px solid rgba(255,255,255,0.05);">
+                                    </div>
+                                    <div class="col mb-3 admin-input-group">
+                                        <label class="form-label text-secondary small text-uppercase fw-bold">Experience</label>
+                                        <input type="text" class="form-control bg-dark text-white rounded-3 py-2 px-3" name="ui_nav_experience" value="${profile.ui_nav_experience || ''}" required style="border: 1px solid rgba(255,255,255,0.05);">
+                                    </div>
+                                    <div class="col mb-3 admin-input-group">
+                                        <label class="form-label text-secondary small text-uppercase fw-bold">Contact</label>
+                                        <input type="text" class="form-control bg-dark text-white rounded-3 py-2 px-3" name="ui_nav_contact" value="${profile.ui_nav_contact || ''}" required style="border: 1px solid rgba(255,255,255,0.05);">
+                                    </div>
+                                </div>
+
+                                <div class="text-end mt-5 pt-4 border-top border-dark">
+                                    <button type="submit" class="btn btn-lg rounded-pill px-5 py-3 fw-bold text-black" style="background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary)); border:none; box-shadow: 0 0 20px rgba(0,240,255,0.3);">
+                                        <i class="fas fa-sync-alt me-2"></i> SYNC AMBIENT CONFIG
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 `;
 
         ['projects', 'skills', 'experience', 'education'].forEach(collection => {
@@ -651,6 +760,19 @@ export default class AdminView {
 
         handleFileUpload('photoUpload', 'photoBase64');
         handleFileUpload('cvUpload', 'cvBase64');
+
+        // Ambient Form
+        const ambientForm = document.getElementById('form-ambient');
+        if(ambientForm) {
+            ambientForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const formData = new FormData(ambientForm);
+                const ambientData = Object.fromEntries(formData.entries());
+                // Merge with profile data (since it's all in the profile store)
+                const fullProfile = { ...data.profile, ...ambientData };
+                if(this.onSaveProfile) this.onSaveProfile(fullProfile);
+            });
+        }
 
         // Profile Form
         document.getElementById('form-profile').addEventListener('submit', (e) => {

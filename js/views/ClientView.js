@@ -7,11 +7,11 @@ export default class ClientView {
 
     renderHeader(profile, sections) {
         const labels = {
-            'about': 'About',
-            'skills': 'Skills',
-            'projects': 'Projects',
-            'experience': 'Experience',
-            'contact': 'Contact'
+            'about': profile.ui_nav_about || 'About',
+            'skills': profile.ui_nav_skills || 'Skills',
+            'projects': profile.ui_nav_projects || 'Projects',
+            'experience': profile.ui_nav_experience || 'Experience',
+            'contact': profile.ui_nav_contact || 'Contact'
         };
 
         const navLinks = sections.map(sec => `<li class="nav-item"><a class="nav-link text-uppercase" style="letter-spacing:1px; font-size:0.9rem;" href="#${sec}">${labels[sec]}</a></li>`).join('');
@@ -35,7 +35,7 @@ export default class ClientView {
     renderHero(profile) {
         return `
         <section class="hero-section position-relative d-flex align-items-center" style="min-height: 100vh; overflow: hidden; padding-top: 80px;">
-            <div class="position-absolute fw-bolder text-uppercase" style="font-size: 20vw; color: rgba(255,255,255,0.015); top: 10%; left: -5%; z-index: 0; user-select: none; pointer-events: none; white-space: nowrap;">HELLO</div>
+            <div class="position-absolute fw-bolder text-uppercase" style="font-size: 20vw; color: rgba(255,255,255,0.015); top: 10%; left: -5%; z-index: 0; user-select: none; pointer-events: none; white-space: nowrap;">${profile.ui_hero_bg || 'HELLO'}</div>
             <div class="hero-glow" style="width: 50vw; height: 50vw; background: radial-gradient(circle, rgba(0, 240, 255, 0.1) 0%, transparent 70%); top: -20%; left: -10%;"></div>
             <div class="hero-glow-2" style="width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(185, 0, 255, 0.1) 0%, transparent 70%); bottom: -10%; right: -10%;"></div>
             
@@ -45,7 +45,7 @@ export default class ClientView {
                         <div class="d-flex flex-wrap justify-content-center justify-content-lg-start align-items-center mb-3 gap-3 animate-user-intro">
                             <div class="d-inline-flex align-items-center glass-card px-3 py-2 rounded-pill shadow-sm" style="border-left: 2px solid var(--accent-primary); background: rgba(0, 240, 255, 0.05);">
                                 <span class="spinner-grow spinner-grow-sm me-2" style="color: var(--accent-primary);" role="status"></span>
-                                <span class="font-monospace text-uppercase small fw-bold" style="letter-spacing: 2px; color: var(--accent-primary);">System Online // User Identified</span>
+                                <span class="font-monospace text-uppercase small fw-bold" style="letter-spacing: 2px; color: var(--accent-primary);">${profile.ui_hero_status || 'System Online // User Identified'}</span>
                             </div>
                             ${profile.openToWork ? `
                             <div class="d-inline-flex align-items-center glass-card px-3 py-2 rounded-pill shadow-sm" style="border-left: 2px solid #28a745; background: rgba(40, 167, 69, 0.05);">
@@ -64,7 +64,7 @@ export default class ClientView {
                         
                         <div class="d-flex gap-3 justify-content-center justify-content-lg-start flex-wrap animate-actions mb-5">
                             <a href="#projects" class="btn btn-lg rounded-pill px-5 py-3 fw-bold shadow-lg position-relative overflow-hidden group hover-lift analytics-track" data-event="EXPLORE_CLICK" style="background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary)); color: #000; border: none; transition: transform 0.3s ease;">
-                                <span class="position-relative z-1">Explore Arsenal <i class="fas fa-arrow-right ms-2 transition-transform"></i></span>
+                                <span class="position-relative z-1">${profile.ui_hero_btn || 'Explore Arsenal'} <i class="fas fa-arrow-right ms-2 transition-transform"></i></span>
                             </a>
                             ${profile.cv ? `<a href="${profile.cv}" download="${profile.name.replace(/\s+/g, '_')}_CV.pdf" class="btn btn-lg rounded-pill px-5 py-3 fw-bold glass-card hover-lift analytics-track" data-event="CV_DOWNLOAD" style="border: 1px solid rgba(185,0,255,0.3); color: var(--accent-secondary); transition: all 0.3s ease;"><i class="fas fa-file-download me-2"></i>Download CV</a>` : ''}
                         </div>
@@ -108,7 +108,7 @@ export default class ClientView {
             </div>
             
             <div class="position-absolute bottom-0 start-50 translate-middle-x mb-4 z-1 text-center animate-socials" style="animation-delay: 1.5s;">
-                <p class="text-secondary small font-monospace text-uppercase mb-2" style="letter-spacing: 2px; font-size: 0.7rem;">Deploying Modules</p>
+                <p class="text-secondary small font-monospace text-uppercase mb-2" style="letter-spacing: 2px; font-size: 0.7rem;">${profile.ui_hero_deploy || 'Deploying Modules'}</p>
                 <div class="mx-auto border border-secondary rounded-pill d-flex justify-content-center pt-1" style="width: 24px; height: 38px;">
                     <div class="bg-white rounded-circle scroll-indicator-dot" style="width: 4px; height: 8px;"></div>
                 </div>
@@ -119,7 +119,7 @@ export default class ClientView {
     renderAbout(profile) {
         return `
         <section id="about" class="py-5 position-relative mt-5 reveal">
-            <div class="position-absolute fw-bolder text-uppercase" style="font-size: 16vw; color: rgba(255,255,255,0.02); top: -80px; left: -20px; z-index: 0; user-select: none; pointer-events: none; overflow: hidden; white-space: nowrap;">ABOUT</div>
+            <div class="position-absolute fw-bolder text-uppercase" style="font-size: 16vw; color: rgba(255,255,255,0.02); top: -80px; left: -20px; z-index: 0; user-select: none; pointer-events: none; overflow: hidden; white-space: nowrap;">${profile.ui_about_bg || 'ABOUT'}</div>
             <div class="container position-relative z-1">
                 <div class="d-flex align-items-center mb-5">
                     <div class="flex-grow-1 me-4 rounded-pill" style="height: 3px; background: linear-gradient(90deg, transparent, var(--accent-primary)); opacity: 0.5;"></div>
@@ -141,13 +141,13 @@ export default class ClientView {
                                 <div class="rounded-circle me-2 shadow-sm" style="width: 14px; height: 14px; background: #ff5f56;"></div>
                                 <div class="rounded-circle me-2 shadow-sm" style="width: 14px; height: 14px; background: #ffbd2e;"></div>
                                 <div class="rounded-circle shadow-sm" style="width: 14px; height: 14px; background: #27c93f;"></div>
-                                <div class="ms-4 text-secondary font-monospace small">sys_admin@portfolio:~</div>
+                                <div class="ms-4 text-secondary font-monospace small">${profile.ui_terminal_prompt || 'sys_admin@portfolio:~'}</div>
                             </div>
                             <div class="p-4 p-md-5 font-monospace fs-6">
-                                <p class="mb-4"><span style="color: var(--accent-primary);">sys_admin@portfolio:~$</span> whoami<br><span class="text-white ms-3 d-block mt-2 fw-bold" style="color: var(--accent-secondary) !important;">${profile.name}</span></p>
-                                <p class="mb-4"><span style="color: var(--accent-primary);">sys_admin@portfolio:~$</span> locate<br><span class="text-white ms-3 d-block mt-2"><i class="fas fa-map-marker-alt text-danger me-2"></i>${profile.location}</span></p>
-                                <p class="mb-4"><span style="color: var(--accent-primary);">sys_admin@portfolio:~$</span> contact --email<br><span class="text-white ms-3 d-block mt-2"><i class="fas fa-envelope text-warning me-2"></i>${profile.email}</span></p>
-                                <p class="mb-0"><span style="color: var(--accent-primary);">sys_admin@portfolio:~$</span> contact --phone<br><span class="text-white ms-3 d-block mt-2"><i class="fas fa-phone text-success me-2"></i>${profile.phone}</span></p>
+                                <p class="mb-4"><span style="color: var(--accent-primary);">${profile.ui_terminal_prompt || 'sys_admin@portfolio:~$'}</span> whoami<br><span class="text-white ms-3 d-block mt-2 fw-bold" style="color: var(--accent-secondary) !important;">${profile.name}</span></p>
+                                <p class="mb-4"><span style="color: var(--accent-primary);">${profile.ui_terminal_prompt || 'sys_admin@portfolio:~$'}</span> locate<br><span class="text-white ms-3 d-block mt-2"><i class="fas fa-map-marker-alt text-danger me-2"></i>${profile.location}</span></p>
+                                <p class="mb-4"><span style="color: var(--accent-primary);">${profile.ui_terminal_prompt || 'sys_admin@portfolio:~$'}</span> contact --email<br><span class="text-white ms-3 d-block mt-2"><i class="fas fa-envelope text-warning me-2"></i>${profile.email}</span></p>
+                                <p class="mb-0"><span style="color: var(--accent-primary);">${profile.ui_terminal_prompt || 'sys_admin@portfolio:~$'}</span> contact --phone<br><span class="text-white ms-3 d-block mt-2"><i class="fas fa-phone text-success me-2"></i>${profile.phone}</span></p>
                             </div>
                         </div>
                     </div>
@@ -159,7 +159,7 @@ export default class ClientView {
     renderSkills(skills) {
         return `
         <section id="skills" class="py-5 position-relative mt-5 reveal">
-            <div class="position-absolute fw-bolder text-uppercase w-100 text-end pe-4" style="font-size: 16vw; color: rgba(255,255,255,0.02); top: -60px; right: 0; z-index: 0; user-select: none; pointer-events: none; overflow: hidden; white-space: nowrap;">SKILLS</div>
+            <div class="position-absolute fw-bolder text-uppercase w-100 text-end pe-4" style="font-size: 16vw; color: rgba(255,255,255,0.02); top: -60px; right: 0; z-index: 0; user-select: none; pointer-events: none; overflow: hidden; white-space: nowrap;">${profile.ui_skills_bg || 'SKILLS'}</div>
             <div class="container position-relative z-1">
                 <div class="text-center mb-5">
                     <h2 class="gradient-text d-inline-block display-5 fw-bold font-monospace mb-3">&lt;Technical_Arsenal /&gt;</h2>
@@ -190,7 +190,7 @@ export default class ClientView {
     renderProjects(projects) {
         return `
         <section id="projects" class="py-5 position-relative mt-5 reveal">
-            <div class="position-absolute fw-bolder text-uppercase w-100" style="font-size: 16vw; color: rgba(255,255,255,0.02); top: -60px; left: -20px; z-index: 0; user-select: none; pointer-events: none; overflow: hidden; white-space: nowrap;">PROJECTS</div>
+            <div class="position-absolute fw-bolder text-uppercase w-100" style="font-size: 16vw; color: rgba(255,255,255,0.02); top: -60px; left: -20px; z-index: 0; user-select: none; pointer-events: none; overflow: hidden; white-space: nowrap;">${profile.ui_projects_bg || 'PROJECTS'}</div>
             <div class="container position-relative z-1">
                 <div class="d-flex align-items-center mb-5">
                     <div class="flex-grow-1 me-4 rounded-pill" style="height: 3px; background: linear-gradient(90deg, transparent, var(--accent-secondary)); opacity: 0.5;"></div>
@@ -230,7 +230,7 @@ export default class ClientView {
     renderExperience(exp, edu) {
         return `
         <section id="experience" class="py-5 position-relative mt-5 mb-5 reveal">
-            <div class="position-absolute fw-bolder text-uppercase w-100 text-end pe-4" style="font-size: 16vw; color: rgba(255,255,255,0.02); top: -40px; right: 0; z-index: 0; user-select: none; pointer-events: none; overflow: hidden; white-space: nowrap;">TIMELINE</div>
+            <div class="position-absolute fw-bolder text-uppercase w-100 text-end pe-4" style="font-size: 16vw; color: rgba(255,255,255,0.02); top: -40px; right: 0; z-index: 0; user-select: none; pointer-events: none; overflow: hidden; white-space: nowrap;">${profile.ui_timeline_bg || 'TIMELINE'}</div>
             <div class="container position-relative z-1">
                 <div class="row g-5">
                     <div class="col-lg-6">
@@ -279,7 +279,7 @@ export default class ClientView {
     renderContact(profile) {
         return `
         <section id="contact" class="py-5 position-relative mt-5 reveal">
-            <div class="position-absolute fw-bolder text-uppercase" style="font-size: 16vw; color: rgba(255,255,255,0.02); top: -40px; left: -20px; z-index: 0; user-select: none; pointer-events: none; overflow: hidden; white-space: nowrap;">CONTACT</div>
+            <div class="position-absolute fw-bolder text-uppercase" style="font-size: 16vw; color: rgba(255,255,255,0.02); top: -40px; left: -20px; z-index: 0; user-select: none; pointer-events: none; overflow: hidden; white-space: nowrap;">${profile.ui_contact_bg || 'CONTACT'}</div>
             <div class="container position-relative z-1">
                 <div class="row justify-content-center mb-5 text-center">
                     <div class="col-lg-8">
@@ -366,9 +366,9 @@ export default class ClientView {
                     <a href="#" class="text-secondary hover-white fs-4" style="transition: all 0.3s;" onmouseover="this.style.color='var(--accent-primary)'; this.style.transform='translateY(-3px)';" onmouseout="this.style.color=''; this.style.transform='translateY(0)';"><i class="fab fa-linkedin"></i></a>
                     <a href="#" class="text-secondary hover-white fs-4" style="transition: all 0.3s;" onmouseover="this.style.color='var(--accent-primary)'; this.style.transform='translateY(-3px)';" onmouseout="this.style.color=''; this.style.transform='translateY(0)';"><i class="fas fa-envelope"></i></a>
                 </div>
-                <p class="text-secondary font-monospace small mb-1">© ${new Date().getFullYear()} Charuka Mayura Bandara. All rights reserved.</p>
+                <p class="text-secondary font-monospace small mb-1">© ${new Date().getFullYear()} ${profile.name}. All rights reserved.</p>
                 <div class="d-flex justify-content-center align-items-center gap-3 mt-2">
-                    <p class="text-secondary small opacity-50 font-monospace mb-0" style="font-size: 0.65rem;"><i class="fas fa-code me-2"></i>OS.PRIME_V3.2RC</p>
+                    <p class="text-secondary small opacity-50 font-monospace mb-0" style="font-size: 0.65rem;"><i class="fas fa-code me-2"></i>${profile.version || 'OS.PRIME_V3.2RC'}</p>
                     <span class="text-secondary opacity-25">|</span>
                     <p class="text-secondary small opacity-50 font-monospace mb-0" style="font-size: 0.65rem;"><i class="fas fa-sync-alt me-2"></i>SYNC_OK: ${new Date().toLocaleTimeString()}</p>
                 </div>
@@ -387,12 +387,43 @@ export default class ClientView {
             if(el) el.setAttribute('content', content);
         };
 
-        updateMeta('meta[name="description"]', profile.tagline);
-        updateMeta('meta[property="og:title"]', `${profile.name} | ${profile.role}`);
-        updateMeta('meta[property="og:description"]', profile.tagline);
-        if(profile.photo) updateMeta('meta[property="og:image"]', profile.photo);
-        updateMeta('meta[name="twitter:title"]', `${profile.name} | ${profile.role}`);
-        updateMeta('meta[name="twitter:description"]', profile.tagline);
+        const updateText = (selector, content) => {
+            const el = document.querySelector(selector);
+            if(el) el.innerText = content;
+        };
+
+        updateText('#page-title', `${profile.name} | ${profile.role}`);
+        updateMeta('#meta-description', profile.tagline);
+        updateMeta('#meta-keywords', profile.keywords);
+        
+        updateMeta('#meta-og-url', profile.url);
+        updateMeta('#meta-og-title', `${profile.name} | ${profile.role}`);
+        updateMeta('#meta-og-description', profile.tagline);
+        if(profile.photo) updateMeta('#meta-og-image', profile.photo);
+        
+        updateMeta('#meta-tw-title', `${profile.name} | ${profile.role}`);
+        updateMeta('#meta-tw-description', profile.tagline);
+        
+        const canonical = document.querySelector('#link-canonical');
+        if(canonical) canonical.setAttribute('href', profile.url);
+
+        // JSON-LD Update
+        const schemaJson = document.querySelector('#schema-json');
+        if(schemaJson) {
+            const schema = {
+                "@context": "https://schema.org/",
+                "@type": "Person",
+                "name": profile.name,
+                "jobTitle": profile.role,
+                "url": profile.url,
+                "sameAs": [
+                    `https://linkedin.com/in/${profile.linkedin}`,
+                    `https://github.com/${profile.github}`
+                ],
+                "description": profile.tagline
+            };
+            schemaJson.text = JSON.stringify(schema, null, 2);
+        }
     }
 
     render(data) {
@@ -422,12 +453,12 @@ export default class ClientView {
                 </div>
                 <div id="assistant-terminal" class="assistant-terminal d-none">
                     <div class="terminal-header">
-                        <span><i class="fas fa-terminal me-2"></i>OS.PRIME_AGENT v1.0</span>
+                        <span><i class="fas fa-terminal me-2"></i>${profile.ui_assistant_name || 'PRIME_AGENT'} ${profile.ui_assistant_ver || 'v1.0'}</span>
                         <button id="close-terminal" style="background:none; border:none; color:rgba(255,255,255,0.5); cursor:pointer; font-size:1.5rem;">×</button>
                     </div>
                     <div id="terminal-output" class="terminal-body">
                         <div class="terminal-log-entry text-secondary-terminal">[SYSTEM_INITIALIZED]</div>
-                        <div class="terminal-log-entry">WELCOME, VISITOR. <span class="text-prime fw-bold">I AM PRIME_AGENT.</span></div>
+                        <div class="terminal-log-entry">${profile.ui_assistant_welcome || 'WELCOME, VISITOR.'} <span class="text-prime fw-bold">I AM ${profile.ui_assistant_name || 'PRIME_AGENT'}.</span></div>
                         <div class="terminal-log-entry">TYPE <span class="text-command">'HELP'</span> TO VIEW AVAILABLE SECTORS.</div>
                     </div>
                     <div class="terminal-input-line">
@@ -498,11 +529,11 @@ export default class ClientView {
             if(hasBooted) return;
             hasBooted = true;
             output.innerHTML = '';
-            log("PRIME_AGENT BOOT SEQUENCE INITIATED...", "text-prime", 0);
+            log(profile.ui_assistant_boot || "PRIME_AGENT BOOT SEQUENCE INITIATED...", "text-prime", 0);
             log("[SCANNING MEMORY CORE] ............ OK", "text-secondary-terminal", 300);
             log("[VERIFYING DATABASE SYNC] ......... OK", "text-secondary-terminal", 600);
             log("[ESTABLISHING NEURAL LINK] ........ OK", "text-secondary-terminal", 900);
-            log("SYSTEM_READY. WELCOME, OPERATOR.", "text-prime fw-bold", 1200);
+            log(profile.ui_assistant_ready || "SYSTEM_READY. WELCOME, OPERATOR.", "text-prime fw-bold", 1200);
             log("TYPE <span class='text-command'>'HELP'</span> FOR PROTOCOLS.", "", 1400);
         };
 
@@ -523,7 +554,7 @@ export default class ClientView {
                 log(`SYSTEM_STATUS: <span class="text-prime">OPTIMAL</span><br>
                     UPTIME: ${uptime}s<br>
                     DATABASE: IndexedDB_STABLE<br>
-                    AGENTS: 1_ACTIVE (PRIME_AGENT)`);
+                    AGENTS: 1_ACTIVE (${profile.ui_assistant_name || 'PRIME_AGENT'})`);
             } else if (cmd === 'surprise') {
                 log(`SELECTING RANDOM SECTOR...`);
                 const projects = document.querySelectorAll('.project-card');
