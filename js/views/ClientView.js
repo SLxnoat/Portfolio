@@ -81,7 +81,7 @@ export default class ClientView {
                     <div class="col-lg-5 text-center position-relative mt-5 mt-lg-0 animate-name">
                         <div class="hero-portal mx-auto" style="width: 380px; height: 500px; max-width: 100%;">
                             <div class="hero-portal-inner">
-                                <img src="${profile.photo || 'avatar/profile.jpg'}" alt="Profile Photo" class="w-100 h-100 object-fit-cover opacity-75" style="object-position: center top; transition: transform 0.5s, opacity 0.5s; cursor: pointer;" onmouseover="this.style.transform='scale(1.05)'; this.style.opacity='1';" onmouseout="this.style.transform='scale(1)'; this.style.opacity='0.75';">
+                                <img src="${profile.photo || 'avatar/profile.jpg'}" alt="Profile Photo" class="w-100 h-100 object-fit-cover opacity-75" style="object-position: center top; transition: transform 0.5s, opacity 0.5s; cursor: pointer;" loading="lazy" onmouseover="this.style.transform='scale(1.05)'; this.style.opacity='1';" onmouseout="this.style.transform='scale(1)'; this.style.opacity='0.75';">
                             </div>
                         </div>
                         
@@ -410,6 +410,7 @@ export default class ClientView {
         
         updateMeta('#meta-tw-title', `${profile.name} | ${profile.role}`);
         updateMeta('#meta-tw-description', profile.tagline);
+        updateMeta('#meta-author', profile.name);
         
         const canonical = document.querySelector('#link-canonical');
         if(canonical) canonical.setAttribute('href', profile.url);
