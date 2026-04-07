@@ -15,6 +15,10 @@ export default class AppPresenter {
         this.clientView.onTrackEvent = async (type, metadata) => {
             await this.model.logEvent(type, metadata);
         };
+
+        this.model.setOnSync(() => {
+            this.refreshApp();
+        });
     }
 
     async init() {

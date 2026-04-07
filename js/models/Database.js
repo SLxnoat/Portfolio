@@ -3,6 +3,14 @@ export default class Database {
         this.dbName = dbName;
         this.version = version;
         this.db = null;
+        this.syncChannel = new BroadcastChannel(`${dbName}_sync`);
+        this.onSync = null;
+
+        this.syncChannel.onmessage = (event) => {
+            if (event.data === 'DATABASE_UPDATED' && this.onSync) {
+                this.onSync();
+            }
+        };
     }
 
     async init(stores) {
@@ -78,7 +86,10 @@ export default class Database {
             try {
                 const store = await this.getStore(storeName, 'readwrite');
                 const request = store.put(item);
-                request.onsuccess = () => resolve(request.result);
+                request.onsuccess = () => {
+                    this.syncChannel.postMessage('DATABASE_UPDATED');
+                    resolve(request.result);
+                };
                 request.onerror = () => reject(request.error);
             } catch(e) { reject(e); }
         });
@@ -89,7 +100,10 @@ export default class Database {
             try {
                 const store = await this.getStore(storeName, 'readwrite');
                 const request = store.delete(id);
-                request.onsuccess = () => resolve();
+                request.onsuccess = () => {
+                    this.syncChannel.postMessage('DATABASE_UPDATED');
+                    resolve();
+                };
                 request.onerror = () => reject(request.error);
             } catch(e) { reject(e); }
         });

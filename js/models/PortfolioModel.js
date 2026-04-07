@@ -20,6 +20,10 @@ export default class PortfolioModel {
         await this.seedDataIfEmpty();
     }
 
+    setOnSync(callback) {
+        this.db.onSync = callback;
+    }
+
     async seedDataIfEmpty() {
         const count = await this.db.count('profile');
         if (count === 0) {

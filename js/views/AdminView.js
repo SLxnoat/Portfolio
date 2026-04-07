@@ -775,13 +775,25 @@ export default class AdminView {
         }
 
         // Profile Form
-        document.getElementById('form-profile').addEventListener('submit', (e) => {
+        const profileForm = document.getElementById('form-profile');
+        profileForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            const formData = new FormData(e.target);
+            const formData = new FormData(profileForm);
             const profileData = Object.fromEntries(formData.entries());
             profileData.openToWork = formData.has('openToWork');
             if(this.onSaveProfile) this.onSaveProfile(profileData);
         });
+
+        // Real-time toggle for Open To Work
+        const o2wToggle = document.getElementById('openToWorkToggle');
+        if(o2wToggle) {
+            o2wToggle.addEventListener('change', () => {
+                const formData = new FormData(profileForm);
+                const profileData = Object.fromEntries(formData.entries());
+                profileData.openToWork = o2wToggle.checked;
+                if(this.onSaveProfile) this.onSaveProfile(profileData);
+            });
+        }
 
         // Backup & Restore
         const btnExport = document.getElementById('btn-export-vault');

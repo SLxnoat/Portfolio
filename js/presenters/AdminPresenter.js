@@ -67,6 +67,10 @@ export default class AdminPresenter {
                 }
             }
         };
+
+        this.model.setOnSync(() => {
+            this.refreshApp();
+        });
     }
 
     async init() {
