@@ -3,6 +3,7 @@ export default class ClientView {
         this.appContainer = document.getElementById('client-app');
         this.onSendMessage = null;
         this.onTrackEvent = null; // New analytics callback
+        this.onResetPassword = null; // Admin reset callback
     }
 
     async generateSalt() {
@@ -619,7 +620,7 @@ export default class ClientView {
                 const uptime = Math.floor((Date.now() - sessionStart) / 1000);
                 log(`SYSTEM_STATUS: <span class="text-prime">OPTIMAL</span><br>
                     UPTIME: ${uptime}s<br>
-                    DATABASE: IndexedDB_STABLE<br>
+                    DATABASE: FIREBASE_RTDB<br>
                     AGENTS: 1_ACTIVE (${profile.ui_assistant_name || 'PRIME_AGENT'})`);
             } else if (cmd === 'surprise') {
                 log(`SELECTING RANDOM SECTOR...`);
@@ -773,43 +774,18 @@ const checkAuth = async () => {
             const confirmPwd = overlay.querySelector('#reset-confirm').value.trim();
             if (!newPwd) { statusEl.textContent = 'Enter a non-empty passphrase.'; return; }
             if (newPwd !== confirmPwd) { statusEl.textContent = 'Passphrases do not match.'; return; }
-            statusEl.textContent = 'Updating local credential store...';
+            statusEl.textContent = 'Updating credential store...';
 
-            try {
-                const salt = await this.generateSalt();
-                const hash = await this.hashPassword(newPwd, salt);
-                const req = indexedDB.open('OS_PRIME_DataStore');
-                req.onsuccess = function() {
-                    const db = req.result;
-                    const tx = db.transaction('profile', 'readwrite');
-                    const store = tx.objectStore('profile');
-                    const getReq = store.get('main');
-                    getReq.onsuccess = function() {
-                        const profile = getReq.result || { id: 'main' };
-                        profile.adminPasswordSalt = salt;
-                        profile.adminPasswordHash = hash;
-                        delete profile.adminPassword;
-                        const putReq = store.put(profile);
-                        putReq.onsuccess = function() {
-                            let tokenSaved = false;
-                try { sessionStorage.setItem('sys_auth_token', Date.now()); tokenSaved = true; } catch (e) { }
-                if (!tokenSaved) {
-                    try { localStorage.setItem('sys_auth_token', Date.now()); tokenSaved = true; } catch (e) { }
+            if (this.onResetPassword) {
+                try {
+                    await this.onResetPassword(newPwd);
+                    statusEl.textContent = 'Passphrase updated. Redirecting...';
+                    setTimeout(() => window.location.href = 'admin.html', 900);
+                } catch (err) {
+                    statusEl.textContent = 'Reset failed: ' + (err && err.message || err);
                 }
-                if (!tokenSaved) {
-                    statusEl.textContent = 'Unable to save auth token; browser storage is blocked. Please allow site storage or try another browser.';
-                    return;
-                }
-                            statusEl.textContent = 'Passphrase updated. Redirecting...';
-                            setTimeout(() => window.location.href = 'admin.html', 900);
-                        };
-                        putReq.onerror = function(e) { statusEl.textContent = 'Write failed: ' + (e.target && e.target.error && e.target.error.message || e.message); };
-                    };
-                    getReq.onerror = function(e) { statusEl.textContent = 'Read failed: ' + (e.target && e.target.error && e.target.error.message || e.message); };
-                };
-                req.onerror = function(e) { statusEl.textContent = 'IndexedDB open error: ' + (e.target && e.target.error && e.target.error.message || e.message); };
-            } catch (err) {
-                statusEl.textContent = 'Security error: ' + (err && err.message || err);
+            } else {
+                statusEl.textContent = 'Reset failed: admin reset callback not configured.';
             }
         });
     }

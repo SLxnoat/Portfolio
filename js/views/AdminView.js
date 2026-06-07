@@ -213,7 +213,7 @@ export default class AdminView {
                                             </div>
                                             <div class="mb-5">
                                                 <div class="d-flex justify-content-between mb-2">
-                                                    <span class="text-secondary font-monospace small">DB Synchronization (IndexedDB)</span>
+                                                    <span class="text-secondary font-monospace small">DB Synchronization (Realtime Database)</span>
                                                     <span class="text-success font-monospace small">STABLE</span>
                                                 </div>
                                                 <div class="progress bg-dark overflow-visible" style="height: 6px;">

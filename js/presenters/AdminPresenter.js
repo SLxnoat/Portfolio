@@ -35,9 +35,8 @@ export default class AdminPresenter {
                     if(data.order === null || isNaN(data.order)) data.order = item ? item.order : null;
                     await this.model.updateItem(collection, data);
                 } else {
-                    // Logic fix: Remove empty id to allow IndexedDB autoIncrement to work
+                    // Remove empty id to allow Firebase to generate a stable key via model helper
                     delete data.id;
-                    // Adds natively calculate proper max order value
                     await this.model.addItem(collection, data);
                 }
                 this.refreshApp();
@@ -122,8 +121,8 @@ export default class AdminPresenter {
                 <div class="vw-100 vh-100 d-flex justify-content-center align-items-center bg-dark text-white">
                     <div class="text-center">
                         <i class="fas fa-lock fa-3x text-danger mb-4"></i>
-                        <h2 class="text-danger fw-bold">Database Locked</h2>
-                        <p class="text-secondary">Failed to initialize IndexedDB Admin Pipeline: <code class="text-light">${error.name || error.message || 'Unknown Error'}</code></p>
+                        <h2 class="text-danger fw-bold">Initialization Failed</h2>
+                        <p class="text-secondary">Failed to initialize Firebase admin pipeline: <code class="text-light">${error.name || error.message || 'Unknown Error'}</code></p>
                     </div>
                 </div>`;
         }
@@ -143,7 +142,7 @@ export default class AdminPresenter {
     }
 
     async refreshApp() {
-        // Fetch fresh data from indexedDB which applies sorting via the model automatically
+        // Fetch fresh data from Firebase backend which applies sorting via the model automatically
         const data = await this.getFullData();
         
         // Render UI

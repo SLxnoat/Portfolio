@@ -2,6 +2,12 @@ import PortfolioModel from '../models/PortfolioModel.js';
 import ClientView from '../views/ClientView.js';
 
 export default class AppPresenter {
+    saveAuthToken(value) {
+        try { sessionStorage.setItem('sys_auth_token', value); return true; } catch (e) { }
+        try { localStorage.setItem('sys_auth_token', value); return true; } catch (e) { }
+        return false;
+    }
+
     constructor() {
         this.model = new PortfolioModel();
         this.clientView = new ClientView();
@@ -18,6 +24,17 @@ export default class AppPresenter {
 
         this.clientView.onTrackEvent = async (type, metadata) => {
             await this.model.logEvent(type, metadata);
+        };
+
+        this.clientView.onResetPassword = async (newPassword) => {
+            const profile = await this.model.getProfile();
+            if (!profile) throw new Error('Profile not available for reset.');
+            profile.adminPassword = newPassword;
+            await this.model.updateProfile(profile);
+            const token = Date.now().toString();
+            if (!this.saveAuthToken(token)) {
+                throw new Error('Unable to save admin auth token. Storage unavailable.');
+            }
         };
 
         this.model.setOnSync(() => {
@@ -56,7 +73,7 @@ export default class AppPresenter {
     }
 
     async refreshApp() {
-        // Fetch fresh data from indexedDB
+        // Fetch fresh data from Firebase backend
         const data = await this.getFullData();
         
         // Render UI
