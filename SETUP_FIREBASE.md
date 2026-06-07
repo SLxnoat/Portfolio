@@ -64,7 +64,7 @@ export const firebaseConfig = {
   "rules": {
     "portfolio": {
       ".read": true,
-      ".write": false,
+      ".write": "auth.uid != null",
       "profile": {
         ".write": "auth.uid != null"
       },
@@ -87,7 +87,7 @@ export const firebaseConfig = {
         ".write": "auth.uid != null"
       },
       "analytics": {
-        ".write": true
+        ".write": "auth.uid != null"
       }
     }
   }

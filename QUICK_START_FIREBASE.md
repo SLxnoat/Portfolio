@@ -33,7 +33,7 @@ In Firebase Console:
   "rules": {
     "portfolio": {
       ".read": true,
-      ".write": false,
+      ".write": "auth.uid != null",
       "profile": { ".write": "auth.uid != null" },
       "projects": { ".write": "auth.uid != null" },
       "skills": { ".write": "auth.uid != null" },
@@ -41,7 +41,7 @@ In Firebase Console:
       "education": { ".write": "auth.uid != null" },
       "messages": { ".write": "auth.uid != null" },
       "settings": { ".write": "auth.uid != null" },
-      "analytics": { ".write": true }
+      "analytics": { ".write": "auth.uid != null" }
     }
   }
 }
