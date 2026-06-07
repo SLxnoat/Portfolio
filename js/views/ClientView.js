@@ -402,7 +402,7 @@ export default class ClientView {
                         <i class="fas fa-check fa-3x" style="color: var(--accent-primary);"></i>
                     </div>
                     <h3 class="text-white fw-bold mb-3">Transmission Successful</h3>
-                    <p class="text-secondary fs-5">Your message has been securely delivered to the internal database. I will review it shortly.</p>
+                    <p class="text-secondary fs-5">Your message has been saved locally and your email client has been opened so you can send it immediately.</p>
                 </div>
             `;
         }

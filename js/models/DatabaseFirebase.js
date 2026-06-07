@@ -2,7 +2,7 @@
 // Replaces IndexedDB with Firebase Realtime Database for cross-device sync
 
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js';
-import { getDatabase, ref, set, get, remove, onValue } from 'https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js';
+import { getDatabase, ref, set, get, remove, onValue, off, update } from 'https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js';
 import { firebaseConfig } from './FirebaseConfig.js';
 
 export default class Database {

@@ -9,6 +9,10 @@ export default class AppPresenter {
         this.clientView.onSendMessage = async (msgData) => {
             await this.model.addMessage(msgData);
             await this.model.logEvent('MESSAGE_SENT');
+            const profile = await this.model.getProfile();
+            if (profile && profile.email) {
+                this.openMailClient(profile.email, msgData);
+            }
             this.clientView.showContactSuccess();
         };
 
@@ -57,5 +61,26 @@ export default class AppPresenter {
         
         // Render UI
         this.clientView.render(data);
+    }
+
+    openMailClient(toEmail, msgData) {
+        const subject = `Portfolio Inquiry: ${msgData.subject || 'New Message'}`;
+        const bodyLines = [
+            `Name: ${msgData.name || 'Anonymous'}`,
+            `Reply-To: ${msgData.email || 'Not provided'}`,
+            '',
+            `${msgData.message || ''}`,
+            '',
+            '---',
+            'Sent from portfolio contact form.'
+        ];
+        const body = encodeURIComponent(bodyLines.join('\r\n'));
+        const mailtoUrl = `mailto:${encodeURIComponent(toEmail)}?subject=${encodeURIComponent(subject)}&body=${body}`;
+
+        try {
+            window.location.href = mailtoUrl;
+        } catch (err) {
+            console.error('Failed to open email client:', err);
+        }
     }
 }
