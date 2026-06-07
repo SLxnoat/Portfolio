@@ -52,6 +52,11 @@ export default class PortfolioModel {
         return this.arrayBufferToBase64(derivedBits);
     }
 
+    getDefaultCvPath() {
+        // Use a relative path so GitHub project pages and root sites both resolve correctly.
+        return './cv.pdf';
+    }
+
     async init() {
         await this.db.init(this.stores);
         await this.seedDataIfEmpty();
@@ -81,6 +86,7 @@ export default class PortfolioModel {
                 openToWork: true,
                 adminPasswordSalt: seedSalt,
                 adminPasswordHash: seedHash,
+                cv: this.getDefaultCvPath(),
                 summary: 'IT undergraduate specializing in AI/ML with hands-on experience in machine learning, deep learning, NLP, and LLM systems.\n\nBuilt and deployed 17+ projects\nAchieved:\n- 96% accuracy (credit scoring model)\n- 95% accuracy (CNN image classifier)\n- 90%+ accuracy (BERT NLP classifier)\nExperienced in end-to-end ML pipelines + MLOps\nDeveloped LLM-powered assistants using LLaMA + LangChain',
                 
                 // SEO & System
@@ -160,6 +166,10 @@ export default class PortfolioModel {
                     const salt = await this.generateSalt();
                     profile.adminPasswordSalt = salt;
                     profile.adminPasswordHash = await this.hashPassword('admin', salt);
+                    changed = true;
+                }
+                if (profile.cv === undefined) {
+                    profile.cv = this.getDefaultCvPath();
                     changed = true;
                 }
                 
