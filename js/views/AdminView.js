@@ -110,7 +110,7 @@ export default class AdminView {
                 </div>
                 
                 <div class="mt-auto pt-5">
-                    <a href="index.html" onclick="sessionStorage.removeItem('sys_auth_token');" class="btn btn-outline-danger w-100 rounded-4 py-3 fw-bold d-flex align-items-center justify-content-center gap-2" style="border: 1px solid rgba(255, 95, 86, 0.1) !important; background: rgba(255, 95, 86, 0.02); color: #ff5f56;"><i class="fas fa-power-off"></i> DEACTIVATE TERMINAL</a>
+                    <a href="index.html" onclick="clearAuthToken();" class="btn btn-outline-danger w-100 rounded-4 py-3 fw-bold d-flex align-items-center justify-content-center gap-2" style="border: 1px solid rgba(255, 95, 86, 0.1) !important; background: rgba(255, 95, 86, 0.02); color: #ff5f56;"><i class="fas fa-power-off"></i> DEACTIVATE TERMINAL</a>
                 </div>
             </div>
 

@@ -14,11 +14,28 @@
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js" defer></script>
     <script>
         // Security Gate check with 30m expiry
+        const setAuthToken = (value) => {
+            try { sessionStorage.setItem('sys_auth_token', value); return true; } catch (e) { }
+            try { localStorage.setItem('sys_auth_token', value); return true; } catch (e) { }
+            return false;
+        };
+
+        const getAuthToken = () => {
+            try { const token = sessionStorage.getItem('sys_auth_token'); if (token) return token; } catch (e) { }
+            try { const token = localStorage.getItem('sys_auth_token'); if (token) return token; } catch (e) { }
+            return null;
+        };
+
+        const clearAuthToken = () => {
+            try { sessionStorage.removeItem('sys_auth_token'); } catch (e) { }
+            try { localStorage.removeItem('sys_auth_token'); } catch (e) { }
+        };
+
         (() => {
-            const token = sessionStorage.getItem('sys_auth_token');
+            const token = getAuthToken();
             const sessionStart = parseInt(token);
             if(!token || isNaN(sessionStart) || (Date.now() - sessionStart) > (30 * 60 * 1000)) {
-                sessionStorage.removeItem('sys_auth_token');
+                clearAuthToken();
                 window.location.replace('index.html');
             }
         })();

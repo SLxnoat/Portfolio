@@ -722,7 +722,15 @@ const checkAuth = async () => {
             }
 
             if (isValid) {
-                sessionStorage.setItem('sys_auth_token', Date.now());
+                let tokenSaved = false;
+                try { sessionStorage.setItem('sys_auth_token', Date.now()); tokenSaved = true; } catch (e) { }
+                if (!tokenSaved) {
+                    try { localStorage.setItem('sys_auth_token', Date.now()); tokenSaved = true; } catch (e) { }
+                }
+                if (!tokenSaved) {
+                    overlay.innerHTML = '<div style="position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:9999;display:flex;align-items:center;justify-content:center;color:#f77;font-size:1rem;font-family:monospace;text-align:center;padding:2rem;">Unable to save auth token because browser storage is blocked. Please allow site storage or try a different browser.</div>';
+                    return;
+                }
                 overlay.innerHTML = '<div style="position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:9999;display:flex;align-items:center;justify-content:center;color:#0f0;font-size:1.5rem;font-family:monospace;"><i class="fas fa-unlock me-3"></i> PERMISSION GRANTED... REDIRECTING</div>';
                 setTimeout(() => window.location.href = 'admin.html', 1200);
             } else {
@@ -783,7 +791,15 @@ const checkAuth = async () => {
                         delete profile.adminPassword;
                         const putReq = store.put(profile);
                         putReq.onsuccess = function() {
-                            try { sessionStorage.setItem('sys_auth_token', Date.now()); } catch (e) {}
+                            let tokenSaved = false;
+                try { sessionStorage.setItem('sys_auth_token', Date.now()); tokenSaved = true; } catch (e) { }
+                if (!tokenSaved) {
+                    try { localStorage.setItem('sys_auth_token', Date.now()); tokenSaved = true; } catch (e) { }
+                }
+                if (!tokenSaved) {
+                    statusEl.textContent = 'Unable to save auth token; browser storage is blocked. Please allow site storage or try another browser.';
+                    return;
+                }
                             statusEl.textContent = 'Passphrase updated. Redirecting...';
                             setTimeout(() => window.location.href = 'admin.html', 900);
                         };

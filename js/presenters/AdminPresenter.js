@@ -2,6 +2,17 @@ import PortfolioModel from '../models/PortfolioModel.js';
 import AdminView from '../views/AdminView_v33.js';
 
 export default class AdminPresenter {
+    getAuthToken() {
+        try { const token = sessionStorage.getItem('sys_auth_token'); if (token) return token; } catch (e) { }
+        try { const token = localStorage.getItem('sys_auth_token'); if (token) return token; } catch (e) { }
+        return null;
+    }
+
+    clearAuthToken() {
+        try { sessionStorage.removeItem('sys_auth_token'); } catch (e) { }
+        try { localStorage.removeItem('sys_auth_token'); } catch (e) { }
+    }
+
     constructor() {
         this.model = new PortfolioModel();
         this.adminView = new AdminView();
@@ -94,10 +105,10 @@ export default class AdminPresenter {
     }
 
     async init() {
-        const token = sessionStorage.getItem('sys_auth_token');
+        const token = this.getAuthToken();
         const sessionStart = parseInt(token);
         if(!token || isNaN(sessionStart) || (Date.now() - sessionStart) > (30 * 60 * 1000)) {
-            sessionStorage.removeItem('sys_auth_token');
+            this.clearAuthToken();
             window.location.href = 'index.html';
             return;
         }
