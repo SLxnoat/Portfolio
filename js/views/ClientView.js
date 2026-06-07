@@ -379,7 +379,7 @@ export default class ClientView {
                     <a href="https://${profile.linkedin}" target="_blank" aria-label="LinkedIn" class="text-secondary hover-white fs-4" style="transition: all 0.3s;" onmouseover="this.style.color='var(--accent-primary)'; this.style.transform='translateY(-3px)';" onmouseout="this.style.color=''; this.style.transform='translateY(0)';"><i class="fab fa-linkedin"></i></a>
                     <a href="mailto:${profile.email}" aria-label="Email" class="text-secondary hover-white fs-4" style="transition: all 0.3s;" onmouseover="this.style.color='var(--accent-primary)'; this.style.transform='translateY(-3px)';" onmouseout="this.style.color=''; this.style.transform='translateY(0)';"><i class="fas fa-envelope"></i></a>
                 </div>
-                <p class="text-secondary font-monospace small mb-1">© ${new Date().getFullYear()} ${profile.name}. All rights reserved.</p>
+                <p class="text-secondary font-monospace small mb-1"><span id="copyright-gateway" style="cursor:pointer; user-select:none;">© ${new Date().getFullYear()} ${profile.name}.</span> All rights reserved.</p>
                 <div class="d-flex justify-content-center align-items-center gap-3 mt-2">
                     <p class="text-secondary small opacity-50 font-monospace mb-0" style="font-size: 0.65rem;"><i class="fas fa-code me-2"></i>${profile.version || 'OS.PRIME_V3.2RC'}</p>
                     <span class="text-secondary opacity-25">|</span>
@@ -708,6 +708,21 @@ export default class ClientView {
                 if (this.clickCount >= 5) {
                     this.clickCount = 0;
                     initiateAdminLogin();
+                }
+            }
+        });
+
+        // Hidden Sysadmin Gateway - Method 3: 5 rapid clicks on the copyright © text
+        document.body.addEventListener('click', (e) => {
+            const c = document.getElementById('copyright-gateway');
+            if (c && c.contains(e.target)) {
+                this.copyrightClicks = (this.copyrightClicks || 0) + 1;
+                clearTimeout(this.copyrightTimer);
+                this.copyrightTimer = setTimeout(() => { this.copyrightClicks = 0; }, 1500);
+                if (this.copyrightClicks >= 5) {
+                    this.copyrightClicks = 0;
+                    // Open the temporary reset page in same tab
+                    try { window.location.href = 'reset_admin.html'; } catch (err) { console.error('Failed to open reset page', err); }
                 }
             }
         });
