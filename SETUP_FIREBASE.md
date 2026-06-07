@@ -96,12 +96,14 @@ export const firebaseConfig = {
 
 3. Click **Publish**
 
-### 6. Enable Anonymous Authentication (For Admin)
+### 6. Enable Anonymous Authentication (Required)
 1. Go to **Build** → **Authentication**
 2. Click **Get started**
 3. Go to **Sign-in method** tab
 4. Click **Anonymous** and enable it
 5. Click **Save**
+
+> This is required because the portfolio code signs in anonymously before writing data to Firebase. Without it, the app will be blocked by Realtime Database rules.
 
 ### 7. Test It!
 1. Open your portfolio on Device A (e.g., laptop)
@@ -125,6 +127,7 @@ export const firebaseConfig = {
 ### "Permission denied" when saving
 - Verify security rules are published correctly
 - Check that Anonymous authentication is enabled
+- Make sure the Realtime Database path is `portfolio/` and your rules allow authenticated write access for the profile/projects/settings branches
 
 ### Changes not syncing
 1. Open browser console (F12)

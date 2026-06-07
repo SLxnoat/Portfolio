@@ -3,6 +3,7 @@
 
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js';
 import { getDatabase, ref, set, get, remove, onValue } from 'https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js';
+import { getAuth, signInAnonymously } from 'https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js';
 import { firebaseConfig } from './FirebaseConfig.js';
 
 export default class Database {
@@ -11,6 +12,7 @@ export default class Database {
         this.version = version;
         this.db = null;
         this.app = null;
+        this.auth = null;
         this.onSync = null;
         this.listeners = new Map(); // Track active listeners for cleanup
         this.localCache = {}; // Local cache for offline support
@@ -28,7 +30,9 @@ export default class Database {
             // Initialize Firebase
             this.app = initializeApp(firebaseConfig);
             this.db = getDatabase(this.app);
+            this.auth = getAuth(this.app);
             
+            await this.ensureAnonymousAuth();
             console.log("Firebase Database initialized successfully");
             
             // Set up real-time listeners for each store
@@ -39,6 +43,18 @@ export default class Database {
             return this.db;
         } catch (error) {
             console.error(`DATABASE_CRITICAL_FAILURE: [${error.name}] ${error.message}`);
+            throw error;
+        }
+    }
+
+    async ensureAnonymousAuth() {
+        if (!this.auth) throw new Error('Firebase Auth not initialized');
+        if (this.auth.currentUser) return this.auth.currentUser;
+        try {
+            const credential = await signInAnonymously(this.auth);
+            return credential.user;
+        } catch (error) {
+            console.error('Firebase auth failure:', error);
             throw error;
         }
     }
