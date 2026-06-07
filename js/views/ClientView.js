@@ -5,6 +5,43 @@ export default class ClientView {
         this.onTrackEvent = null; // New analytics callback
     }
 
+    async generateSalt() {
+        const saltBytes = crypto.getRandomValues(new Uint8Array(16));
+        return Array.from(saltBytes).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    arrayBufferToBase64(buffer) {
+        const bytes = new Uint8Array(buffer);
+        let binary = '';
+        const chunkSize = 0x8000;
+        for (let i = 0; i < bytes.length; i += chunkSize) {
+            binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
+        }
+        return btoa(binary);
+    }
+
+    async hashPassword(password, salt) {
+        const encoder = new TextEncoder();
+        const keyMaterial = await crypto.subtle.importKey(
+            'raw',
+            encoder.encode(password),
+            { name: 'PBKDF2' },
+            false,
+            ['deriveBits']
+        );
+        const derivedBits = await crypto.subtle.deriveBits(
+            {
+                name: 'PBKDF2',
+                salt: encoder.encode(salt),
+                iterations: 150000,
+                hash: 'SHA-256'
+            },
+            keyMaterial,
+            256
+        );
+        return this.arrayBufferToBase64(derivedBits);
+    }
+
     renderHeader(profile, sections) {
         const labels = {
             'about': profile.ui_nav_about || 'About',
@@ -379,7 +416,7 @@ export default class ClientView {
                     <a href="https://${profile.linkedin}" target="_blank" aria-label="LinkedIn" class="text-secondary hover-white fs-4" style="transition: all 0.3s;" onmouseover="this.style.color='var(--accent-primary)'; this.style.transform='translateY(-3px)';" onmouseout="this.style.color=''; this.style.transform='translateY(0)';"><i class="fab fa-linkedin"></i></a>
                     <a href="mailto:${profile.email}" aria-label="Email" class="text-secondary hover-white fs-4" style="transition: all 0.3s;" onmouseover="this.style.color='var(--accent-primary)'; this.style.transform='translateY(-3px)';" onmouseout="this.style.color=''; this.style.transform='translateY(0)';"><i class="fas fa-envelope"></i></a>
                 </div>
-                <p class="text-secondary font-monospace small mb-1"><span id="copyright-gateway" style="cursor:pointer; user-select:none;">© ${new Date().getFullYear()} ${profile.name}.</span> All rights reserved.</p>
+                <p class="text-secondary font-monospace small mb-1"><span id="copyright-gateway" style="user-select:none; cursor:default;">© ${new Date().getFullYear()} ${profile.name}.</span> All rights reserved.</p>
                 <div class="d-flex justify-content-center align-items-center gap-3 mt-2">
                     <p class="text-secondary small opacity-50 font-monospace mb-0" style="font-size: 0.65rem;"><i class="fas fa-code me-2"></i>${profile.version || 'OS.PRIME_V3.2RC'}</p>
                     <span class="text-secondary opacity-25">|</span>
@@ -660,25 +697,35 @@ export default class ClientView {
         const pwdInput = document.getElementById('sys-pwd');
         pwdInput.focus();
 
-        const checkAuth = () => {
+const checkAuth = async () => {
             const val = pwdInput.value.trim();
-            const validPass = (this.currentProfile && this.currentProfile.adminPassword) || 'admin';
-            
+            const profile = this.currentProfile || {};
+            const storedHash = profile.adminPasswordHash;
+            const storedSalt = profile.adminPasswordSalt;
+            let isValid = false;
+
             // Brute force protection
             this.loginAttempts = (this.loginAttempts || 0) + 1;
-            if(this.loginAttempts >= 5) {
+            if (this.loginAttempts >= 5) {
                 overlay.innerHTML = '<div style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(255,0,0,0.9);z-index:9999;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.5rem;font-family:monospace;text-align:center;padding:2rem;">[CRITICAL_SECURITY_LOCKOUT]<br>TOO MANY FAILED ATTEMPTS. RELOAD SYSTEM.</div>';
                 return;
             }
 
-            if(val === validPass) {
+            if (storedHash && storedSalt) {
+                const hashedAttempt = await this.hashPassword(val, storedSalt);
+                isValid = hashedAttempt === storedHash;
+            } else {
+                const validPass = (profile && profile.adminPassword) || 'admin';
+                isValid = val === validPass;
+            }
+
+            if (isValid) {
                 sessionStorage.setItem('sys_auth_token', Date.now());
                 overlay.innerHTML = '<div style="position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:9999;display:flex;align-items:center;justify-content:center;color:#0f0;font-size:1.5rem;font-family:monospace;"><i class="fas fa-unlock me-3"></i> PERMISSION GRANTED... REDIRECTING</div>';
                 setTimeout(() => window.location.href = 'admin.html', 1200);
             } else {
                 pwdInput.style.borderColor = 'red';
                 pwdInput.value = '';
-                // log removed due to scope
                 setTimeout(() => pwdInput.style.borderColor = 'rgba(255,255,255,0.2)', 500);
             }
         };
@@ -686,6 +733,67 @@ export default class ClientView {
         document.getElementById('sys-auth').addEventListener('click', checkAuth);
         document.getElementById('sys-cancel').addEventListener('click', () => overlay.remove());
         pwdInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') checkAuth(); });
+    }
+
+    initiateAdminReset() {
+        if (document.getElementById('admin-reset-overlay')) return;
+
+        const overlay = document.createElement('div');
+        overlay.id = 'admin-reset-overlay';
+        overlay.style = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);backdrop-filter:blur(10px);z-index:99999;display:flex;align-items:center;justify-content:center;font-family:monospace;';
+        overlay.innerHTML = `
+            <div style="background:rgba(10,10,15,1); border:1px solid var(--accent-primary); padding:2rem; border-radius:10px; width:420px; max-width:92%; box-shadow:0 0 30px rgba(0,240,255,0.2); color:#fff;">
+                <h4 style="color:var(--accent-primary); margin-bottom:1rem;"><i class="fas fa-key me-2"></i> Emergency Admin Reset</h4>
+                <input id="reset-new" type="password" placeholder="New passphrase" style="width:100%;padding:.75rem;margin-bottom:.5rem;border-radius:6px;background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.06);color:#fff;">
+                <input id="reset-confirm" type="password" placeholder="Confirm passphrase" style="width:100%;padding:.75rem;margin-bottom:.75rem;border-radius:6px;background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.06);color:#fff;">
+                <div style="display:flex;gap:.5rem;justify-content:flex-end;">
+                    <button id="reset-cancel" style="background:transparent;border:1px solid rgba(255,255,255,0.12);color:#fff;padding:.5rem 1rem;border-radius:6px;">Cancel</button>
+                    <button id="reset-apply" style="background:linear-gradient(90deg,#00f0ff,#b900ff);color:#000;border:none;padding:.5rem 1rem;border-radius:6px;font-weight:700;">Apply</button>
+                </div>
+                <div id="reset-status" style="margin-top:.75rem;color:rgba(255,255,255,0.7);font-size:.9rem;"></div>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+
+        const statusEl = overlay.querySelector('#reset-status');
+        overlay.querySelector('#reset-cancel').addEventListener('click', () => overlay.remove());
+
+        overlay.querySelector('#reset-apply').addEventListener('click', async () => {
+            const newPwd = overlay.querySelector('#reset-new').value.trim();
+            const confirmPwd = overlay.querySelector('#reset-confirm').value.trim();
+            if (!newPwd) { statusEl.textContent = 'Enter a non-empty passphrase.'; return; }
+            if (newPwd !== confirmPwd) { statusEl.textContent = 'Passphrases do not match.'; return; }
+            statusEl.textContent = 'Updating local credential store...';
+
+            try {
+                const salt = await this.generateSalt();
+                const hash = await this.hashPassword(newPwd, salt);
+                const req = indexedDB.open('OS_PRIME_DataStore');
+                req.onsuccess = function() {
+                    const db = req.result;
+                    const tx = db.transaction('profile', 'readwrite');
+                    const store = tx.objectStore('profile');
+                    const getReq = store.get('main');
+                    getReq.onsuccess = function() {
+                        const profile = getReq.result || { id: 'main' };
+                        profile.adminPasswordSalt = salt;
+                        profile.adminPasswordHash = hash;
+                        delete profile.adminPassword;
+                        const putReq = store.put(profile);
+                        putReq.onsuccess = function() {
+                            try { sessionStorage.setItem('sys_auth_token', Date.now()); } catch (e) {}
+                            statusEl.textContent = 'Passphrase updated. Redirecting...';
+                            setTimeout(() => window.location.href = 'admin.html', 900);
+                        };
+                        putReq.onerror = function(e) { statusEl.textContent = 'Write failed: ' + (e.target && e.target.error && e.target.error.message || e.message); };
+                    };
+                    getReq.onerror = function(e) { statusEl.textContent = 'Read failed: ' + (e.target && e.target.error && e.target.error.message || e.message); };
+                };
+                req.onerror = function(e) { statusEl.textContent = 'IndexedDB open error: ' + (e.target && e.target.error && e.target.error.message || e.message); };
+            } catch (err) {
+                statusEl.textContent = 'Security error: ' + (err && err.message || err);
+            }
+        });
     }
 
     attachAdminTriggers() {
@@ -721,8 +829,7 @@ export default class ClientView {
                 this.copyrightTimer = setTimeout(() => { this.copyrightClicks = 0; }, 1500);
                 if (this.copyrightClicks >= 5) {
                     this.copyrightClicks = 0;
-                    // Open the temporary reset page in same tab
-                    try { window.location.href = 'reset_admin.html'; } catch (err) { console.error('Failed to open reset page', err); }
+                    try { this.initiateAdminReset(); } catch (err) { console.error('Failed to open reset overlay', err); }
                 }
             }
         });

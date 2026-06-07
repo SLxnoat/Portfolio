@@ -15,6 +15,43 @@ export default class PortfolioModel {
         ];
     }
 
+    async generateSalt() {
+        const saltBytes = crypto.getRandomValues(new Uint8Array(16));
+        return Array.from(saltBytes).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    arrayBufferToBase64(buffer) {
+        const bytes = new Uint8Array(buffer);
+        let binary = '';
+        const chunkSize = 0x8000;
+        for (let i = 0; i < bytes.length; i += chunkSize) {
+            binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
+        }
+        return btoa(binary);
+    }
+
+    async hashPassword(password, salt) {
+        const encoder = new TextEncoder();
+        const keyMaterial = await crypto.subtle.importKey(
+            'raw',
+            encoder.encode(password),
+            { name: 'PBKDF2' },
+            false,
+            ['deriveBits']
+        );
+        const derivedBits = await crypto.subtle.deriveBits(
+            {
+                name: 'PBKDF2',
+                salt: encoder.encode(salt),
+                iterations: 150000,
+                hash: 'SHA-256'
+            },
+            keyMaterial,
+            256
+        );
+        return this.arrayBufferToBase64(derivedBits);
+    }
+
     async init() {
         await this.db.init(this.stores);
         await this.seedDataIfEmpty();
@@ -28,6 +65,8 @@ export default class PortfolioModel {
         const count = await this.db.count('profile');
         if (count === 0) {
             console.log("Seeding default data...");
+            const seedSalt = await this.generateSalt();
+            const seedHash = await this.hashPassword('admin', seedSalt);
             await this.db.put('profile', {
                 id: 'main',
                 name: 'Charuka Mayura Bandara',
@@ -40,7 +79,8 @@ export default class PortfolioModel {
                 github: 'github.com/SLxnoat',
                 linkedin: 'linkedin.com/in/charuka-mayura',
                 openToWork: true,
-                adminPassword: 'admin',
+                adminPasswordSalt: seedSalt,
+                adminPasswordHash: seedHash,
                 summary: 'IT undergraduate specializing in AI/ML with hands-on experience in machine learning, deep learning, NLP, and LLM systems.\n\nBuilt and deployed 17+ projects\nAchieved:\n- 96% accuracy (credit scoring model)\n- 95% accuracy (CNN image classifier)\n- 90%+ accuracy (BERT NLP classifier)\nExperienced in end-to-end ML pipelines + MLOps\nDeveloped LLM-powered assistants using LLaMA + LangChain',
                 
                 // SEO & System
@@ -109,7 +149,19 @@ export default class PortfolioModel {
             if (profile) {
                 let changed = false;
                 if (profile.openToWork === undefined) { profile.openToWork = true; changed = true; }
-                if (profile.adminPassword === undefined) { profile.adminPassword = 'admin'; changed = true; }
+                if (profile.adminPassword) {
+                    const salt = profile.adminPasswordSalt || await this.generateSalt();
+                    profile.adminPasswordHash = await this.hashPassword(profile.adminPassword, salt);
+                    profile.adminPasswordSalt = salt;
+                    delete profile.adminPassword;
+                    changed = true;
+                }
+                if (profile.adminPasswordHash === undefined) {
+                    const salt = await this.generateSalt();
+                    profile.adminPasswordSalt = salt;
+                    profile.adminPasswordHash = await this.hashPassword('admin', salt);
+                    changed = true;
+                }
                 
                 const defaults = {
                     keywords: 'AI Engineer, ML Engineer, Deep Learning, NLP, Portfolio, Charuka Mayura, Sri Lanka, Tech Arsenal, Innovation',
@@ -168,7 +220,16 @@ export default class PortfolioModel {
     }
 
     async getProfile() { return await this.db.get('profile', 'main'); }
-    async updateProfile(data) { data.id = 'main'; return await this.db.put('profile', data); }
+    async updateProfile(data) {
+        data.id = 'main';
+        if (data.adminPassword) {
+            const salt = await this.generateSalt();
+            data.adminPasswordSalt = salt;
+            data.adminPasswordHash = await this.hashPassword(data.adminPassword, salt);
+            delete data.adminPassword;
+        }
+        return await this.db.put('profile', data);
+    }
 
     // Returns ordered items
     async getAllItems(collection) { 
