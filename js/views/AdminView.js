@@ -739,24 +739,54 @@ export default class AdminView {
     attachEventListeners(schemas, data) {
         console.error("V3.0_FORM_INTERCEPTOR_DEPRECATED");
         console.log("CRITICAL_DEBUG: Attaching listeners to forms...");
-        // Handle file uploads to Base64 strings
+        // Handle file uploads to Base64 strings with click and drag/drop support
         const handleFileUpload = (inputId, hiddenId) => {
             const fileInput = document.getElementById(inputId);
-            if(fileInput) {
-                fileInput.addEventListener('change', (e) => {
-                    const file = e.target.files[0];
+            if (!fileInput) return;
+
+            const container = fileInput.closest('.custom-file-upload');
+            const saveFile = (file) => {
+                if (!file) return;
+                if (file.size > 5 * 1024 * 1024) {
+                    alert("File is larger than 5MB. Since the database is entirely local, large files work, but may slow down initial load times.");
+                }
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const hiddenInput = document.getElementById(hiddenId);
+                    if (hiddenInput) {
+                        hiddenInput.value = event.target.result;
+                    }
+                    if (inputId === 'photoUpload') {
+                        const preview = document.getElementById('profile-preview-img');
+                        if (preview) preview.src = event.target.result;
+                    }
+                };
+                reader.readAsDataURL(file);
+            };
+
+            fileInput.addEventListener('change', (e) => {
+                saveFile(e.target.files[0]);
+            });
+
+            if (container) {
+                container.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    container.style.borderColor = 'var(--accent-primary)';
+                    container.style.background = 'rgba(0, 240, 255, 0.05)';
+                });
+                container.addEventListener('dragleave', (e) => {
+                    e.preventDefault();
+                    container.style.borderColor = '';
+                    container.style.background = '';
+                });
+                container.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    container.style.borderColor = '';
+                    container.style.background = '';
+                    const file = e.dataTransfer.files[0];
                     if (file) {
-                        if(file.size > 5 * 1024 * 1024) { // over 5MB warning
-                            alert("File is larger than 5MB. Since the database is entirely local, large files work, but may slow down initial load times.");
-                        }
-                        const reader = new FileReader();
-                        reader.onload = (event) => {
-                            document.getElementById(hiddenId).value = event.target.result;
-                            if(inputId === 'photoUpload') {
-                                document.getElementById('profile-preview-img').src = event.target.result;
-                            }
-                        };
-                        reader.readAsDataURL(file);
+                        fileInput.files = e.dataTransfer.files;
+                        saveFile(file);
                     }
                 });
             }
