@@ -4,16 +4,7 @@
 // 2. Enable Realtime Database (test mode)
 // 3. Copy your config from Project Settings
 
-<script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
+export const firebaseConfig = {
     apiKey: "AIzaSyBKCDeeOolfqs3oA5kZhtM--nllQ22RcbE",
     authDomain: "portfolio-sync-2efaf.firebaseapp.com",
     databaseURL: "https://portfolio-sync-2efaf-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -22,12 +13,7 @@
     messagingSenderId: "794966578973",
     appId: "1:794966578973:web:f2a8fe7e73dd3e5d4d73f4",
     measurementId: "G-XN5YM2LPHQ"
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-</script>
+};
 
 // Replace the above with your Firebase config from:
 // Firebase Console > Project Settings > Your apps > Web app > Firestore/Database details
