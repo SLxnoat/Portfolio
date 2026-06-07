@@ -37,8 +37,8 @@ export default class AppPresenter {
                     <div class="text-center">
                         <i class="fas fa-exclamation-triangle fa-3x text-danger mb-4"></i>
                         <h2 class="text-danger fw-bold">System Error</h2>
-                        <p class="text-secondary">Failed to initialize Firebase data sync: <code class="text-light">${error.name || error.message || 'Unknown Error'}</code></p>
-                        <p class="text-secondary small mt-3">Make sure Firebase Realtime Database and anonymous auth are configured correctly.</p>
+                        <p class="text-secondary">Firebase initialization failed: <code class="text-light">${error.name || error.message || 'Unknown Error'}</code></p>
+                        <p class="text-secondary small mt-3">Check your Realtime Database rules and make sure anonymous auth is enabled.</p>
                     </div>
                 </div>`;
         }

@@ -3,7 +3,7 @@
 
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js';
 import { getDatabase, ref, set, get, remove, onValue } from 'https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js';
-import { getAuth, signInAnonymously } from 'https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js';
+import { getAuth, signInAnonymously, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js';
 import { firebaseConfig } from './FirebaseConfig.js';
 
 export default class Database {
@@ -49,14 +49,32 @@ export default class Database {
 
     async ensureAnonymousAuth() {
         if (!this.auth) throw new Error('Firebase Auth not initialized');
-        if (this.auth.currentUser) return this.auth.currentUser;
-        try {
-            const credential = await signInAnonymously(this.auth);
-            return credential.user;
-        } catch (error) {
-            console.error('Firebase auth failure:', error);
-            throw error;
-        }
+
+        return new Promise((resolve, reject) => {
+            const unsubscribe = onAuthStateChanged(this.auth, async (user) => {
+                if (user) {
+                    console.log('Firebase auth ready:', user.uid, 'anonymous=', user.isAnonymous);
+                    unsubscribe();
+                    resolve(user);
+                    return;
+                }
+
+                try {
+                    const credential = await signInAnonymously(this.auth);
+                    console.log('Firebase anonymous sign-in succeeded:', credential.user.uid);
+                    unsubscribe();
+                    resolve(credential.user);
+                } catch (error) {
+                    console.error('Firebase auth failure:', error);
+                    unsubscribe();
+                    reject(error);
+                }
+            }, (error) => {
+                console.error('Firebase auth state error:', error);
+                unsubscribe();
+                reject(error);
+            });
+        });
     }
 
     setupStoreListener(storeName) {
