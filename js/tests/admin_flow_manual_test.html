@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin Flow Manual Test (stub)</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>body{background:#07070a;color:#fff;font-family:Inter, sans-serif}#admin-root{padding:20px}</style>
+</head>
+<body>
+  <h3 style="margin:20px">Admin Flow Manual Test (Stubbed DB)</h3>
+  <div id="admin-root"></div>
+  <p>Open the browser devtools console to follow the simulated operations and logs.</p>
+
+  <script type="module">
+    import AdminView from '../views/AdminView_v33.js';
+
+    const adminView = new AdminView();
+    const root = document.getElementById('admin-root');
+    adminView.adminContainer = root; // render into this page
+
+    // In-memory stub store (uses string IDs like Firebase)
+    const store = {
+      profile: { id: 'main', name: 'Test Operator', ui_assistant_name: 'PRIME_AGENT' },
+      projects: [
+        { id: 'p_1', title: 'Project Alpha', tech: 'JS', description: 'First', order: 0 },
+        { id: 'p_2', title: 'Project Beta', tech: 'Python', description: 'Second', order: 1 }
+      ],
+      skills: [],
+      experience: [],
+      education: [],
+      messages: []
+    };
+
+    // Callback implementations that mimic the presenter's behavior
+    adminView.onSaveItem = async (collection, item) => {
+      console.log('[TEST] onSaveItem', collection, item);
+      if (!item.id) {
+        item.id = 'id_' + Date.now();
+      }
+      const idx = store[collection].findIndex(x => x.id === item.id);
+      if (idx >= 0) store[collection][idx] = item; else store[collection].push(item);
+      console.log('[TEST] store after save', JSON.parse(JSON.stringify(store[collection])));
+      adminView.render({ profile: store.profile, projects: store.projects, skills: store.skills, experience: store.experience, education: store.education, messages: store.messages, layout: { sections: ['about','projects','contact'] } });
+    };
+
+    adminView.onDeleteItem = async (collection, id) => {
+      console.log('[TEST] onDeleteItem', collection, id);
+      store[collection] = store[collection].filter(x => x.id !== id);
+      console.log('[TEST] store after delete', JSON.parse(JSON.stringify(store[collection])));
+      adminView.render({ profile: store.profile, projects: store.projects, skills: store.skills, experience: store.experience, education: store.education, messages: store.messages, layout: { sections: ['about','projects','contact'] } });
+    };
+
+    adminView.onReorderItems = async (collection, orderMapping) => {
+      console.log('[TEST] onReorderItems', collection, orderMapping);
+      orderMapping.forEach(m => {
+        const it = store[collection].find(x => String(x.id) === String(m.id));
+        if (it) it.order = m.order;
+      });
+      store[collection].sort((a,b) => (a.order||0) - (b.order||0));
+      console.log('[TEST] store after reorder', JSON.parse(JSON.stringify(store[collection])));
+      adminView.render({ profile: store.profile, projects: store.projects, skills: store.skills, experience: store.experience, education: store.education, messages: store.messages, layout: { sections: ['about','projects','contact'] } });
+    };
+
+    // Render initial UI
+    adminView.render({ profile: store.profile, projects: store.projects, skills: store.skills, experience: store.experience, education: store.education, messages: store.messages, layout: { sections: ['about','projects','contact'] } });
+
+    console.log('Admin test UI rendered. Running simulated operations...');
+
+    // Simulate edit: click first edit button, change title, submit form
+    setTimeout(() => {
+      const editBtn = document.querySelector('button[data-action="edit"][data-collection="projects"]');
+      if (editBtn) {
+        console.log('[TEST] triggering edit click');
+        editBtn.click();
+        setTimeout(() => {
+          const form = document.getElementById('form-projects');
+          if (form) {
+            form.elements['title'].value = 'Project Alpha (Edited)';
+            form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+            console.log('[TEST] submitted edit form');
+          } else console.warn('Form not found after edit click');
+        }, 200);
+      } else console.warn('Edit button not found');
+    }, 500);
+
+    // Simulate delete: click first delete button
+    setTimeout(() => {
+      const delBtn = document.querySelector('button[data-action="delete"][data-collection="projects"]');
+      if (delBtn) {
+        console.log('[TEST] triggering delete click');
+        delBtn.click();
+      } else console.warn('Delete button not found');
+    }, 1600);
+
+    // Simulate reorder via calling reorder handler
+    setTimeout(() => {
+      const ids = store.projects.map(p => p.id).reverse();
+      const mapping = ids.map((id, idx) => ({ id, order: idx }));
+      console.log('[TEST] invoking onReorderItems with mapping', mapping);
+      adminView.onReorderItems('projects', mapping);
+    }, 2600);
+
+  </script>
+</body>
+</html>

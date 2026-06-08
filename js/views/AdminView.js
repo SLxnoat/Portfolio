@@ -708,7 +708,7 @@ export default class AdminView {
                     animation: 150,
                     ghostClass: 'sortable-ghost',
                     onEnd: (evt) => {
-                        const newOrderIds = Array.from(el.querySelectorAll(':scope > [data-id]')).map(node => parseInt(node.dataset.id));
+                        const newOrderIds = Array.from(el.querySelectorAll(':scope > [data-id]')).map(node => node.dataset.id);
                         const orderMapping = newOrderIds.map((id, index) => ({ id, order: index }));
                         
                         if (this.onReorderItems) {
@@ -896,7 +896,7 @@ export default class AdminView {
                 }
 
                 if (action === 'delete') {
-                    const id = parseInt(button.dataset.id);
+                    const id = button.dataset.id;
                     if (confirm(`CRITICAL WARNING: Are you sure you want to permanently delete this record?`)) {
                         if(this.onDeleteItem) this.onDeleteItem(collection, id);
                     }
@@ -904,7 +904,7 @@ export default class AdminView {
                 }
                 
                 if (action === 'markRead') {
-                    const id = parseInt(button.dataset.id);
+                    const id = button.dataset.id;
                     if(this.onMarkMessageRead) this.onMarkMessageRead(id);
                     return;
                 }
@@ -921,7 +921,7 @@ export default class AdminView {
                     formContainer.classList.remove('d-none');
                     formContainer.scrollIntoView({ behavior: 'smooth' });
                 } else if (action === 'edit') {
-                    const id = parseInt(button.dataset.id);
+                    const id = button.dataset.id;
                     const item = data[collection].find(i => i.id === id);
                     if (item) {
                         form.reset();
@@ -950,7 +950,7 @@ export default class AdminView {
                     const formData = new FormData(form);
                     const itemData = Object.fromEntries(formData.entries());
                     console.log(`DEBUG: Saving dynamic record to [${col}]`, itemData);
-                    itemData.id = itemData.id ? parseInt(itemData.id) : null;
+                    itemData.id = itemData.id ? itemData.id : null;
                     itemData.order = itemData.order !== "" ? parseInt(itemData.order) : null;
                     
                     if(this.onSaveItem) this.onSaveItem(col, itemData);
